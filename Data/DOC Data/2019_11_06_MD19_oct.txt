@@ -1,0 +1,63 @@
+[Header]	
+System	TOC-L	
+S/W Version	1.00	
+User		
+Date/Time	12/2/2019 11:47:44 AM	
+
+[System]	
+Instrument Options	TOC/ASI/IC Unit/TN/	
+
+[Data]	
+Type	Anal.	Sample Name	Sample ID	Result(TOC)	Result(TC)	Result(IC)	Result(POC)	Result(NPOC)	Result(TN)	Unit	Vial	Date / Time	
+Unknown	NPOC	Ellie_MD19o	BLK					0.5683		mg/L	1	11/6/2019 4:53:40 PM	
+Unknown	NPOC	Ellie_MD19o	BLK					2.006		mg/L	2	11/6/2019 5:07:48 PM	
+Unknown	NPOC	Ellie_MD19o	MD19117					5.415		mg/L	3	11/6/2019 5:22:13 PM	
+Unknown	NPOC	Ellie_MD19o	MD19118					5.010		mg/L	4	11/6/2019 5:33:54 PM	
+Unknown	NPOC	Ellie_MD19o	MD19119					4.805		mg/L	5	11/6/2019 5:45:33 PM	
+Unknown	NPOC	Ellie_MD19o	MD19120					4.865		mg/L	6	11/6/2019 5:57:15 PM	
+Unknown	NPOC	Ellie_MD19o	MD19121					5.062		mg/L	7	11/6/2019 6:11:38 PM	
+Unknown	NPOC	Ellie_MD19o	MD19122					5.005		mg/L	8	11/6/2019 6:22:02 PM	
+Unknown	NPOC	Ellie_MD19o	MD19123					4.998		mg/L	9	11/6/2019 6:33:54 PM	
+Unknown	NPOC	Ellie_MD19o	MD19124					5.088		mg/L	10	11/6/2019 6:48:20 PM	
+Unknown	NPOC	Ellie_MD19o	BLK					0.7286		mg/L	11	11/6/2019 7:02:21 PM	
+Unknown	NPOC	Ellie_MD19o	MD19125					4.981		mg/L	12	11/6/2019 7:16:41 PM	
+Unknown	NPOC	Ellie_MD19o	MD19126					5.012		mg/L	13	11/6/2019 7:28:17 PM	
+Unknown	NPOC	Ellie_MD19o	MD19127					5.072		mg/L	14	11/6/2019 7:42:41 PM	
+Unknown	NPOC	Ellie_MD19o	MD19128					5.062		mg/L	15	11/6/2019 7:54:21 PM	
+Unknown	NPOC	Ellie_MD19o	MD19129					5.110		mg/L	16	11/6/2019 8:08:43 PM	
+Unknown	NPOC	Ellie_MD19o	MD19130					5.059		mg/L	17	11/6/2019 8:20:23 PM	
+Unknown	NPOC	Ellie_MD19o	MD19131					5.008		mg/L	18	11/6/2019 8:31:45 PM	
+Unknown	NPOC	Ellie_MD19o	MD19132					5.122		mg/L	19	11/6/2019 8:45:58 PM	
+Unknown	NPOC	Ellie_MD19o	MD19133					4.974		mg/L	20	11/6/2019 8:57:38 PM	
+Unknown	NPOC	Ellie_MD19o	MD19134					5.082		mg/L	21	11/6/2019 9:11:52 PM	
+Unknown	NPOC	Ellie_MD19o	BLK					0.9481		mg/L	22	11/6/2019 9:25:53 PM	
+Unknown	NPOC	Ellie_MD19o	MD19135					4.836		mg/L	23	11/6/2019 9:37:26 PM	
+Unknown	NPOC	Ellie_MD19o	MD19136					4.866		mg/L	24	11/6/2019 9:49:13 PM	
+Unknown	NPOC	Ellie_MD19o	MD19137					4.935		mg/L	25	11/6/2019 10:01:06 PM	
+Unknown	NPOC	Ellie_MD19o	MD19138					4.826		mg/L	26	11/6/2019 10:12:33 PM	
+Unknown	NPOC	Ellie_MD19o	MD19139					5.310		mg/L	27	11/6/2019 10:26:49 PM	
+Unknown	NPOC	Ellie_MD19o	MD19140					5.292		mg/L	28	11/6/2019 10:38:39 PM	
+Unknown	NPOC	Ellie_MD19o	MD19141					5.302		mg/L	29	11/6/2019 10:52:55 PM	
+Unknown	NPOC	Ellie_MD19o	MD19143					5.194		mg/L	30	11/6/2019 11:04:36 PM	
+Unknown	NPOC	Ellie_MD19o	MD19144					5.205		mg/L	31	11/6/2019 11:15:03 PM	
+Unknown	NPOC	Ellie_MD19o	BLK					0.7594		mg/L	32	11/6/2019 11:29:05 PM	
+Unknown	NPOC	Ellie_MD19o	MD19145					5.080		mg/L	33	11/6/2019 11:43:25 PM	
+Unknown	NPOC	Ellie_MD19o	MD19146					5.120		mg/L	34	11/6/2019 11:57:55 PM	
+Unknown	NPOC	Ellie_MD19o	MD19147					5.280		mg/L	35	11/7/2019 12:12:24 AM	
+Unknown	NPOC	Ellie_MD19o	MD19148					5.190		mg/L	36	11/7/2019 12:23:57 AM	
+Unknown	NPOC	Ellie_MD19o	MD19149					5.135		mg/L	37	11/7/2019 12:35:48 AM	
+Unknown	NPOC	Ellie_MD19o	MD19150					5.102		mg/L	38	11/7/2019 12:47:28 AM	
+Unknown	NPOC	Ellie_MD19o	MD19151					5.104		mg/L	39	11/7/2019 12:59:12 AM	
+Unknown	NPOC	Ellie_MD19o	MD19152					5.148		mg/L	40	11/7/2019 1:13:39 AM	
+Unknown	NPOC	Ellie_MD19o	MD19153					5.219		mg/L	41	11/7/2019 1:25:20 AM	
+Unknown	NPOC	Ellie_MD19o	MD19154					5.173		mg/L	42	11/7/2019 1:36:57 AM	
+Unknown	NPOC	Ellie_MD19o	BLK					0.6787		mg/L	43	11/7/2019 1:50:59 AM	
+Unknown	NPOC	Ellie_MD19o	MD19155					4.913		mg/L	44	11/7/2019 2:05:19 AM	
+Unknown	NPOC	Ellie_MD19o	MD19156					5.092		mg/L	45	11/7/2019 2:17:08 AM	
+Unknown	NPOC	Ellie_MD19o	MD19157					4.996		mg/L	46	11/7/2019 2:28:35 AM	
+Unknown	NPOC	Ellie_MD19o	MD19158					5.112		mg/L	47	11/7/2019 2:43:01 AM	
+Unknown	NPOC	Ellie_MD19o	MD19159					4.961		mg/L	48	11/7/2019 2:57:17 AM	
+Unknown	NPOC	Ellie_MD19o	MD19160					5.065		mg/L	49	11/7/2019 3:08:51 AM	
+Unknown	NPOC	Ellie_MD19o	MD19161					5.067		mg/L	50	11/7/2019 3:20:44 AM	
+Unknown	NPOC	Ellie_MD19o	MD19162					5.121		mg/L	51	11/7/2019 3:32:21 AM	
+Unknown	NPOC	Ellie_MD19o	BLK					2.202		mg/L	52	11/7/2019 3:46:27 AM	

@@ -1,0 +1,100 @@
+[Header]	
+System	TOC-L	
+S/W Version	1.00	
+User		
+Date/Time	12/2/2019 11:46:54 AM	
+
+[System]	
+Instrument Options	TOC/ASI/IC Unit/TN/	
+
+[Data]	
+Type	Anal.	Sample Name	Sample ID	Result(TOC)	Result(TC)	Result(IC)	Result(POC)	Result(NPOC)	Result(TN)	Unit	Vial	Date / Time	
+Unknown	NPOC	BLK	Untitled					0.5437		mg/L	1	10/29/2019 6:01:49 PM	
+Unknown	NPOC	BLK	Untitled					0.3890		mg/L	2	10/29/2019 6:13:05 PM	
+Unknown	NPOC	MD1901	Untitled					3.601		mg/L	3	10/29/2019 6:27:07 PM	
+Unknown	NPOC	MD1902	Untitled					3.457		mg/L	4	10/29/2019 6:38:35 PM	
+Unknown	NPOC	MD1903	Untitled					3.463		mg/L	5	10/29/2019 6:49:51 PM	
+Unknown	NPOC	MD1904	Untitled					3.545		mg/L	6	10/29/2019 7:03:52 PM	
+Unknown	NPOC	MD1905	Untitled					3.418		mg/L	7	10/29/2019 7:18:04 PM	
+Unknown	NPOC	MD1906	Untitled					3.449		mg/L	8	10/29/2019 7:32:15 PM	
+Unknown	NPOC	MD1907	Untitled					3.355		mg/L	9	10/29/2019 7:46:24 PM	
+Unknown	NPOC	MD1908	Untitled					3.421		mg/L	10	10/29/2019 7:58:03 PM	
+Unknown	NPOC	MD1909	Untitled					3.447		mg/L	11	10/29/2019 8:09:38 PM	
+Unknown	NPOC	MD1910	Untitled					3.385		mg/L	12	10/29/2019 8:21:27 PM	
+Unknown	NPOC	MD1911	Untitled					3.407		mg/L	13	10/29/2019 8:35:41 PM	
+Unknown	NPOC	MD1912	Untitled					3.318		mg/L	14	10/29/2019 8:49:57 PM	
+Unknown	NPOC	MD1913	Untitled					3.331		mg/L	15	10/29/2019 9:01:27 PM	
+Unknown	NPOC	MD1914	Untitled					3.473		mg/L	16	10/29/2019 9:12:43 PM	
+Unknown	NPOC	MD1915	Untitled					3.566		mg/L	17	10/29/2019 9:23:59 PM	
+Unknown	NPOC	MD1916	Untitled					3.622		mg/L	18	10/29/2019 9:35:17 PM	
+Unknown	NPOC	MD1917	Untitled					3.368		mg/L	19	10/29/2019 9:47:04 PM	
+Unknown	NPOC	BLK	Untitled					0.4831		mg/L	20	10/29/2019 10:00:12 PM	
+Unknown	NPOC	MD1918	Untitled					3.149		mg/L	21	10/29/2019 10:14:26 PM	
+Unknown	NPOC	MD1919	Untitled					3.269		mg/L	22	10/29/2019 10:25:52 PM	
+Unknown	NPOC	MD1920	Untitled					3.376		mg/L	23	10/29/2019 10:37:14 PM	
+Unknown	NPOC	MD1921	Untitled					3.359		mg/L	24	10/29/2019 10:48:47 PM	
+Unknown	NPOC	MD1922	Untitled					3.334		mg/L	25	10/29/2019 11:00:07 PM	
+Unknown	NPOC	MD1923	Untitled					3.296		mg/L	26	10/29/2019 11:14:28 PM	
+Unknown	NPOC	MD1924	Untitled					3.343		mg/L	27	10/29/2019 11:28:50 PM	
+Unknown	NPOC	MD1925	Untitled					3.382		mg/L	28	10/29/2019 11:40:22 PM	
+Unknown	NPOC	MD1926	Untitled					3.338		mg/L	29	10/29/2019 11:52:05 PM	
+Unknown	NPOC	MD1927	Untitled					3.342		mg/L	30	10/30/2019 12:03:23 AM	
+Unknown	NPOC	MD1928	Untitled					3.692		mg/L	31	10/30/2019 12:17:59 AM	
+Unknown	NPOC	MD1929	Untitled					0.02796		mg/L	32	10/30/2019 12:32:00 AM	
+Unknown	NPOC	MD1930	Untitled					3.224		mg/L	33	10/30/2019 12:46:12 AM	
+Unknown	NPOC	MD1931	Untitled					3.466		mg/L	34	10/30/2019 12:57:51 AM	
+Unknown	NPOC	MD1932	Untitled					3.695		mg/L	35	10/30/2019 1:09:28 AM	
+Unknown	NPOC	MD1933	Untitled					3.911		mg/L	36	10/30/2019 1:21:11 AM	
+Unknown	NPOC	MD1934	Untitled					3.977		mg/L	37	10/30/2019 1:32:40 AM	
+Unknown	NPOC	MD1935	Untitled					3.490		mg/L	38	10/30/2019 1:46:45 AM	
+Unknown	NPOC	MD1969	Untitled					3.637		mg/L	39	10/30/2019 1:58:14 AM	
+Unknown	NPOC	BLK	Untitled					0.5538		mg/L	40	10/30/2019 2:12:01 AM	
+Unknown	NPOC	MD1970	Untitled					3.586		mg/L	41	10/30/2019 2:26:15 AM	
+Unknown	NPOC	MD1971	Untitled					3.468		mg/L	42	10/30/2019 2:40:31 AM	
+Unknown	NPOC	MD1972	Untitled					3.463		mg/L	43	10/30/2019 2:54:42 AM	
+Unknown	NPOC	MD1973	Untitled					3.466		mg/L	44	10/30/2019 3:07:45 AM	
+Unknown	NPOC	MD1974	Untitled					3.620		mg/L	45	10/30/2019 3:19:19 AM	
+Unknown	NPOC	MD1975	Untitled					3.598		mg/L	46	10/30/2019 3:31:03 AM	
+Unknown	NPOC	MD1976	Untitled					3.504		mg/L	47	10/30/2019 3:42:14 AM	
+Unknown	NPOC	MD1977	Untitled					3.558		mg/L	48	10/30/2019 3:53:37 AM	
+Unknown	NPOC	MD1978	Untitled					3.538		mg/L	49	10/30/2019 4:05:05 AM	
+Unknown	NPOC	MD1979	Untitled					3.428		mg/L	50	10/30/2019 4:19:00 AM	
+Unknown	NPOC	MD1980	Untitled					3.541		mg/L	51	10/30/2019 4:30:35 AM	
+Unknown	NPOC	MD1981	Untitled					3.461		mg/L	52	10/30/2019 4:44:47 AM	
+Unknown	NPOC	MD1982	Untitled					3.498		mg/L	53	10/30/2019 4:56:17 AM	
+Unknown	NPOC	MD1983	Untitled					3.401		mg/L	54	10/30/2019 5:10:15 AM	
+Unknown	NPOC	MD1984	Untitled					3.370		mg/L	55	10/30/2019 5:24:22 AM	
+Unknown	NPOC	MD1985	Untitled					3.480		mg/L	56	10/30/2019 5:38:39 AM	
+Unknown	NPOC	MD1986	Untitled					3.501		mg/L	57	10/30/2019 5:50:08 AM	
+Unknown	NPOC	MD1987	Untitled					3.569		mg/L	58	10/30/2019 6:01:28 AM	
+Unknown	NPOC	MD1988	Untitled					3.454		mg/L	59	10/30/2019 6:15:55 AM	
+Unknown	NPOC	BLK	Untitled					1.604		mg/L	60	10/30/2019 6:29:57 AM	
+Unknown	NPOC	MD1989	Untitled					3.755		mg/L	61	10/30/2019 6:44:13 AM	
+Unknown	NPOC	MD1990	Untitled					3.561		mg/L	62	10/30/2019 6:55:47 AM	
+Unknown	NPOC	MD1991	Untitled					3.395		mg/L	63	10/30/2019 7:10:26 AM	
+Unknown	NPOC	MD1992	Untitled					4.054		mg/L	64	10/30/2019 7:22:00 AM	
+Unknown	NPOC	MD1993	Untitled					3.611		mg/L	65	10/30/2019 7:36:35 AM	
+Unknown	NPOC	MD1994	Untitled					3.562		mg/L	66	10/30/2019 7:50:50 AM	
+Unknown	NPOC	MD1995	Untitled					3.329		mg/L	67	10/30/2019 8:04:01 AM	
+Unknown	NPOC	MD1996	Untitled					3.376		mg/L	68	10/30/2019 8:18:25 AM	
+Unknown	NPOC	MD1997	Untitled					3.101		mg/L	69	10/30/2019 8:32:44 AM	
+Unknown	NPOC	MD1998	Untitled					3.055		mg/L	70	10/30/2019 8:46:59 AM	
+Unknown	NPOC	MD1999	Untitled					3.032		mg/L	71	10/30/2019 8:58:26 AM	
+Unknown	NPOC	MD19100	Untitled					2.949		mg/L	72	10/30/2019 9:12:27 AM	
+Unknown	NPOC	MD19101	Untitled					3.057		mg/L	73	10/30/2019 9:26:38 AM	
+Unknown	NPOC	MD19102	Untitled					2.917		mg/L	74	10/30/2019 9:40:48 AM	
+Unknown	NPOC	MD19103	Untitled					2.838		mg/L	75	10/30/2019 9:55:08 AM	
+Unknown	NPOC	MD19104	Untitled					2.903		mg/L	76	10/30/2019 10:09:22 AM	
+Unknown	NPOC	MD19105	Untitled					2.822		mg/L	77	10/30/2019 10:23:36 AM	
+Unknown	NPOC	MD19106	Untitled					2.935		mg/L	78	10/30/2019 10:35:04 AM	
+Unknown	NPOC	MD19107	Untitled					2.800		mg/L	79	10/30/2019 10:48:55 AM	
+Unknown	NPOC	BLK	Untitled					1.529		mg/L	80	10/30/2019 11:03:03 AM	
+Unknown	NPOC	MD19108	Untitled					2.854		mg/L	81	10/30/2019 11:17:25 AM	
+Unknown	NPOC	MD19109	Untitled					2.885		mg/L	82	10/30/2019 11:31:40 AM	
+Unknown	NPOC	MD19110	Untitled					3.032		mg/L	83	10/30/2019 11:43:13 AM	
+Unknown	NPOC	MD19111	Untitled					2.904		mg/L	84	10/30/2019 11:57:18 AM	
+Unknown	NPOC	MD19112	Untitled					2.875		mg/L	85	10/30/2019 12:11:35 PM	
+Unknown	NPOC	MD19113	Untitled					2.965		mg/L	86	10/30/2019 12:25:52 PM	
+Unknown	NPOC	MD19114	Untitled					2.913		mg/L	87	10/30/2019 12:40:05 PM	
+Unknown	NPOC	MD19115	Untitled					2.890		mg/L	88	10/30/2019 12:54:21 PM	
+Unknown	NPOC	MD19116	Untitled					3.430		mg/L	89	10/30/2019 1:07:32 PM	
