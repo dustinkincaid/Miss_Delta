@@ -331,9 +331,11 @@ allData <-
         filter(var %in% c("TN_mgNL", "PN_mgNL", "TDN_mgNL", "DON_mgNL","DIN_mgNL", "NO3_mgNL", "NH4_mgNL")) %>% 
         mutate(var=factor(var,levels = c("TN_mgNL", "PN_mgNL", "TDN_mgNL", "DON_mgNL","DIN_mgNL", "NO3_mgNL", "NH4_mgNL"))) %>%
         ggplot(aes(x=subcatch,y=sublev,fill=period))+
-        facet_wrap(~var, ncol = 1, scales = "fixed")+
+        facet_wrap(~var, ncol = 1)+
         geom_bar(stat = "identity",position = "dodge")+
-        labs(tag= "outflow = md_lower")+
+        #scale_y_continuos(limits=c(,0.2))+
+        ylim(0,0.2)+
+        labs(tag= "outflow = md_lower",x="Site" ,y="Subcatchmemnt Leverage" )+
         theme_bw()
 
     
@@ -352,7 +354,8 @@ allData <-
         ggplot(aes(x=subcatch,y=sublev,fill=period))+
         facet_wrap(~var, ncol = 1, scales = "fixed")+
         geom_bar(stat = "identity",position = "dodge")+
-        labs(tag= "outflow = md_lower")+
+        ylim(-0.006,0.004)+
+        labs(tag= "outflow = md_lower",x="Site" ,y="Subcatchmemnt Leverage" )+
         theme_bw() 
         
 #Subcatchmemnt leverage for DOC
@@ -367,7 +370,8 @@ allData <-
           mutate(var=factor(var,levels = "DOC_mgCL")) %>% 
           ggplot(aes(x=subcatch,y=sublev,fill=period))+
           geom_bar(stat = "identity",position = "dodge")+
-          labs(tag= "outflow = md_lower")+
+          ylim(-0.08,0.08)+
+          labs(tag= "outflow = md_lower",caption = "DOC",x="Site" ,y="Subcatchmemnt Leverage" )+
           theme_bw() 
 
 
@@ -420,7 +424,8 @@ allData <-
           ggplot(aes(x=subcatch,y=sublev,fill=period))+
           facet_wrap(~var, ncol = 1, scales = "fixed")+
           geom_bar(stat = "identity",position = "dodge")+
-          labs(tag= "outflow = md_fork")+
+          ylim(0,0.2)+
+          labs(tag= "outflow = md_fork",x="Site" ,y="Subcatchmemnt Leverage" )+
           theme_bw()
         
         
@@ -440,7 +445,8 @@ allData <-
           ggplot(aes(x=subcatch,y=sublev,fill=period))+
           facet_wrap(~var, ncol = 1, scales = "fixed")+
           geom_bar(stat = "identity",position = "dodge")+
-          labs(tag= "outflow = md_fork")+
+          ylim(-0.006,0.004)+
+          labs(tag= "outflow = md_fork",x="Site" ,y="Subcatchmemnt Leverage" )+
           theme_bw() 
         
 #Subcatchmemnt leverage for DOC
@@ -456,7 +462,8 @@ allData <-
           filter(!subcatch =="md_lower") %>%
           ggplot(aes(x=subcatch,y=sublev,fill=period))+
           geom_bar(stat = "identity",position = "dodge")+
-          labs(tag= "outflow = md_fork",caption = "DOC")+
+          ylim(-0.08,0.08)+
+          labs(tag= "outflow = md_fork",caption = "DOC",x="Site" ,y="Subcatchmemnt Leverage" )+
           theme_bw() 
         
 
