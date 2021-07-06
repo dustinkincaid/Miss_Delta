@@ -415,6 +415,7 @@ allData <-
         #Plot
         Nlev %>% 
           filter(var %in% c("TN_mgNL", "PN_mgNL", "TDN_mgNL", "DON_mgNL","DIN_mgNL", "NO3_mgNL", "NH4_mgNL")) %>% 
+          filter(!subcatch =="md_lower") %>% 
           mutate(var=factor(var,levels = c("TN_mgNL", "PN_mgNL", "TDN_mgNL", "DON_mgNL","DIN_mgNL", "NO3_mgNL", "NH4_mgNL"))) %>%
           ggplot(aes(x=subcatch,y=sublev,fill=period))+
           facet_wrap(~var, ncol = 1, scales = "fixed")+
@@ -434,6 +435,7 @@ allData <-
         #Plot
         Plev %>% 
           filter(var %in% c("DOP_mgPL","PO4_mgPL","PP_mgPL")) %>%
+          filter(!subcatch =="md_lower") %>%
           mutate(var=factor(var,levels = c("DOP_mgPL","PO4_mgPL","PP_mgPL"))) %>% 
           ggplot(aes(x=subcatch,y=sublev,fill=period))+
           facet_wrap(~var, ncol = 1, scales = "fixed")+
@@ -451,6 +453,7 @@ allData <-
         #Plot
         Clev %>% 
           mutate(var=factor(var,levels = "DOC_mgCL")) %>% 
+          filter(!subcatch =="md_lower") %>%
           ggplot(aes(x=subcatch,y=sublev,fill=period))+
           geom_bar(stat = "identity",position = "dodge")+
           labs(tag= "outflow = md_fork",caption = "DOC")+
