@@ -466,7 +466,19 @@ allData <-
           labs(tag= "outflow = md_fork",caption = "DOC",x="Site" ,y="Subcatchmemnt Leverage" )+
           theme_bw() 
         
+# Subcatchment synchrony ----
+# Calculate the mean concentrations for each variable at each watershed (Wade, Hungerford, and the Miss Delta sampling points)
+conc_means <-
+  leverage %>% 
+  group_by(subcatch, var) %>% 
+  summarize(conc_s_mean = mean(conc_s, na.rm = TRUE),
+            conc_o_mean = mean(conc_o, na.rm = TRUE))
+        
+# Join the means to the leverage dataframe with the raw data
+temporal_synch <-
+  full_join(leverage, conc_means, by = c("subcatch", "var"))
 
+        
         
         
         
