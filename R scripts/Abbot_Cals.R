@@ -468,30 +468,27 @@ allData <-
         
 # Subcatchment synchrony ----
 # Calculate the mean concentrations for each variable at each watershed (Wade, Hungerford, and the Miss Delta sampling points)
-conc_means <-
+# This calculation uses which sampling point as outlet?
+temporal_synch <-
   leverage %>% 
   group_by(subcatch, var) %>% 
+  # Calculate mean concentration at each seat for all sampling times
   mutate(conc_s_mean = mean(conc_s, na.rm = TRUE),
             conc_o_mean = mean(conc_o, na.rm = TRUE)) %>% 
-          
-  mutate(x_xbar=conc_s-conc_s_mean) %>% #Subtract between x and x bar
-  mutate(y_ybar=conc_o-conc_o_mean) %>% #Subtract between y and y bar
-  mutate(x_y= x_xbar *y_ybar) %>% #Product of the subtractions
- #Separate arguments needed to calculate the subcatchment synchrony
-  select("subcatch","period","var","conc_s","conc_o","x_xbar","outlet","y_ybar","x_y")
-                
-# Join the means to the leverage dataframe with the raw data
-#temporal_synch <-
-  #full_join(leverage, conc_means, by = c("subcatch", "var"))
-
-  n_1<-3       
-        
-        Wadesynch<-
-          conc_means %>% 
-          filter(subcatch=="Wade") %>% 
-          mutate(sum=c(sum(x_y[var == "DIN_mgNL"],sum(x_y[var == "DON_mgNL"],
-                 sum(x_y[var == "DOP_mgPL"] ))))) %>%
-          mutate(synch= sum/n_1)
+  # Subtract between x and x bar        
+  mutate(x_xbar = conc_s-conc_s_mean) %>% 
+  # Subtract between y and y bar        
+  mutate(y_ybar = conc_o-conc_o_mean) %>% 
+  # Product of the subtractions
+  mutate(x_y= x_xbar * y_ybar) %>% 
+  # Add count of # of non-NA obs per group
+  mutate(non_na_n = sum(!is.na(x_y))) %>% 
+  # Sum all of x_y for each subcatchment and variable
+  # We'll also group_by non_na_n to keep that column so we can use it for final calc
+  group_by(subcatch, var, non_na_n) %>% 
+  summarize(sum_x_y = sum(x_y)) %>% 
+  # Calculate temp_synch
+  mutate(temp_synch = sum_x_y/(non_na_n - 1))
           
 
             
