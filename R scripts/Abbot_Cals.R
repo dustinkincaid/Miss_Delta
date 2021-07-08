@@ -475,6 +475,7 @@ temporal_synch <-
   # Calculate mean concentration at each seat for all sampling times
   mutate(conc_s_mean = mean(conc_s, na.rm = TRUE),
             conc_o_mean = mean(conc_o, na.rm = TRUE)) %>% 
+  ungroup() %>% 
   # Subtract between x and x bar        
   mutate(x_xbar = conc_s-conc_s_mean) %>% 
   # Subtract between y and y bar        
@@ -482,11 +483,14 @@ temporal_synch <-
   # Product of the subtractions
   mutate(x_y= x_xbar * y_ybar) %>% 
   # Add count of # of non-NA obs per group
+  group_by(subcatch, var) %>% 
   mutate(non_na_n = sum(!is.na(x_y))) %>% 
+  ungroup() %>% 
   # Sum all of x_y for each subcatchment and variable
   # We'll also group_by non_na_n to keep that column so we can use it for final calc
-  group_by(subcatch, var, non_na_n) %>% 
+  group_by(subcatch, var, non_na_n) %>%
   summarize(sum_x_y = sum(x_y)) %>% 
+  ungroup() %>% 
   # Calculate temp_synch
   mutate(temp_synch = sum_x_y/(non_na_n - 1))
           
