@@ -471,12 +471,41 @@ allData <-
 conc_means <-
   leverage %>% 
   group_by(subcatch, var) %>% 
-  summarize(conc_s_mean = mean(conc_s, na.rm = TRUE),
-            conc_o_mean = mean(conc_o, na.rm = TRUE))
-        
+  mutate(conc_s_mean = mean(conc_s, na.rm = TRUE),
+            conc_o_mean = mean(conc_o, na.rm = TRUE)) %>% 
+          
+  mutate(x_xbar=conc_s-conc_s_mean) %>% #Subtract between x and x bar
+  mutate(y_ybar=conc_o-conc_o_mean) %>% #Subtract between y and y bar
+  mutate(x_y= x_xbar *y_ybar) %>% #Product of the subtractions
+ #Separate arguments needed to calculate the subcatchment synchrony
+  select("subcatch","period","var","conc_s","conc_o","x_xbar","outlet","y_ybar","x_y")
+                
 # Join the means to the leverage dataframe with the raw data
-temporal_synch <-
-  full_join(leverage, conc_means, by = c("subcatch", "var"))
+#temporal_synch <-
+  #full_join(leverage, conc_means, by = c("subcatch", "var"))
+
+  n_1<-3       
+        
+        Wadesynch<-
+          conc_means %>% 
+          filter(subcatch=="Wade") %>% 
+          mutate(sum=c(sum(x_y[var == "DIN_mgNL"],sum(x_y[var == "DON_mgNL"],
+                 sum(x_y[var == "DOP_mgPL"] ))))) %>%
+          mutate(synch= sum/n_1)
+          
+
+            
+          
+          
+          
+          
+          
+          
+        
+    
+    
+  
+        
 
         
         
