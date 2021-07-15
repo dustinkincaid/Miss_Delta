@@ -274,52 +274,48 @@ allData <-
 #----Subcatchment Leverage----
 
 
-# Prep subcatchment & outlet data for Abbott calcs 
-#----md_lower----
-  temp <-
-    allData %>% 
-    mutate(q_sp = q_cms/catch_area_km2) %>% 
-    pivot_longer(cols = (NPOC_mgCL:PP_mgPL), names_to = "var", values_to = "conc") %>% 
-    select(-c(tss_mgL:Fe_ugS_km2)) %>% 
-    select(-c(date, q_cms, catchment)) %>% 
-    rename(subcatch = site, area_s = catch_area_km2, q_sp_s = q_sp, conc_s = conc)
-  
-  subcatch <-
-    temp %>% 
-    filter(subcatch != "md_lower")
+  # Prep subcatchment & outlet data for Abbott calcs 
+    #----md_lower----
+      temp <-
+        allData %>% 
+        mutate(q_sp = q_cms/catch_area_km2) %>% 
+        pivot_longer(cols = (NPOC_mgCL:PP_mgPL), names_to = "var", values_to = "conc") %>% 
+        select(-c(tss_mgL:Fe_ugS_km2)) %>% 
+        select(-c(date, q_cms, catchment)) %>% 
+        rename(subcatch = site, area_s = catch_area_km2, q_sp_s = q_sp, conc_s = conc)
+      
+      subcatch <-
+        temp %>% 
+        filter(subcatch != "md_lower")
 
-#outflow = md_lower
-  outlet <-
-    temp %>% 
-    filter(subcatch == "md_lower") %>% 
-    rename(outlet = subcatch, area_o = area_s, q_sp_o = q_sp_s, conc_o = conc_s)
+    #outflow = md_lower
+      outlet <-
+        temp %>% 
+        filter(subcatch == "md_lower") %>% 
+        rename(outlet = subcatch, area_o = area_s, q_sp_o = q_sp_s, conc_o = conc_s)
+        
+    #Leverage
+      leverage <-
+        full_join(subcatch, outlet, by = c("period", "var")) %>% 
+      # cs_co = concentration subcatch-concentration outflow
+        mutate(cs_co = conc_s-conc_o) %>% 
+      #as_ao = area subcatch / area outflof
+        mutate(as_ao=area_s/area_o) %>% 
+      #qs_qo = specific discharge subcatch / specific discharge outflow
+        mutate(qs_qo=q_sp_s/q_sp_o) %>% 
+      #sublev - subcatchment leverage calc. 
+        mutate(sublev= cs_co*as_ao*qs_qo)
   
-#Leverage
-  leverage <-
-    full_join(subcatch, outlet, by = c("period", "var")) %>% 
-# cs_co = concentration subcatch-concentration outflow
-#as_ao = area subcatch / area outflof
-#qs_qo = specific discharge subcatch / specific discharge outflow
-    mutate(cs_co = conc_s-conc_o) %>% 
-    mutate(as_ao=area_s/area_o) %>% 
-    mutate(qs_qo=q_sp_s/q_sp_o) %>% 
-#sublev - subcatchment leverage calc. 
-    mutate(sublev= cs_co*as_ao*qs_qo)
-  
-#Specific discharge comparison to evaluate values 
-  q<-
-    leverage %>% 
-    select(period,subcatch,q_sp_s,outlet,q_sp_o) 
+    #Specific discharge comparison to evaluate values 
+      q<-
+        leverage %>% 
+        select(period,subcatch,q_sp_s,outlet,q_sp_o) 
+      
   
 # Subc. Leverage Plots w/ md_lower as outflow
-  
-      # Color palettes
-      cbp <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-      plt<-c("#F0E442","#E69F00","#CC79A7","#56B4E9","#009E73")
-      
-
-#Subcatchmemnt leverage for N
-      
+    
+    #Subcatchmemnt leverage for N
+        
       Nlev<-
       leverage %>%
       #Extract N sublev values
@@ -339,7 +335,7 @@ allData <-
         theme_bw()
 
     
-#Subcatchmemnt leverage for P
+    #Subcatchmemnt leverage for P
       
       Plev<-
         leverage %>%
@@ -358,7 +354,7 @@ allData <-
         labs(tag= "outflow = md_lower",x="Site" ,y="Subcatchmemnt Leverage" )+
         theme_bw() 
         
-#Subcatchmemnt leverage for DOC
+    #Subcatchmemnt leverage for DOC
         Clev<-
         leverage %>%
           #Extract DOC sublev values
@@ -378,7 +374,7 @@ allData <-
         
 #----md_fork----     
         
-  #Prep subcatchment & outlet data for Abbott calcs
+    #Prep subcatchment & outlet data for Abbott calcs
         temp <-
           allData %>% 
           mutate(q_sp = q_cms/catch_area_km2) %>% 
@@ -408,7 +404,7 @@ allData <-
           #sublev - subcatchment leverage calc. 
           mutate(sublev= cs_co*as_ao*qs_qo)
         
-#Subcatchmemnt leverage for N
+    #Subcatchmemnt leverage for N
         
         Nlev<-
           forklev%>%
@@ -429,7 +425,7 @@ allData <-
           theme_bw()
         
         
-#Subcatchmemnt leverage for P
+    #Subcatchmemnt leverage for P
         
         Plev<-
           forklev %>%
@@ -449,7 +445,7 @@ allData <-
           labs(tag= "outflow = md_fork",x="Site" ,y="Subcatchmemnt Leverage" )+
           theme_bw() 
         
-#Subcatchmemnt leverage for DOC
+    #Subcatchmemnt leverage for DOC
         Clev<-
           forklev %>%
           #Extract DOC sublev values
@@ -467,6 +463,7 @@ allData <-
           theme_bw() 
         
 # Subcatchment synchrony ----
+        
 # Calculate the mean concentrations for each variable at each watershed (Wade, Hungerford, and the Miss Delta sampling points)
 # This calculation uses which sampling point as outlet?
 temporal_synch <-
@@ -493,7 +490,89 @@ temporal_synch <-
   ungroup() %>% 
   # Calculate temp_synch
   mutate(temp_synch = sum_x_y/(non_na_n - 1))
-          
+        
+        
+      #Plots Subcatchment Synchrony
+        
+        # Bar plots for nitrogen synch #
+        
+        #Plot w/ PN,TDN,TN
+        temporal_synch %>% 
+          filter(var %in% c("TN_mgNL", "TDN_mgNL","PN_mgNL")) %>% 
+          ggplot(aes(x=subcatch, y=temp_synch,fill=var ))+
+          #facet_wrap(~subcatch, ncol = 2, scales = "fixed")+
+          geom_bar(stat = "identity",position = "dodge")+
+          ylim(-0.015,0.008)+
+          scale_fill_manual(values=c("#90BE6D","#43AA8B","#577590"))+
+          labs(x="Site" ,y="Subcatchment Synchrony" )+
+          theme_bw()
+        
+        #Plots w/ all nitrogen virables 
+        temporal_synch %>% 
+          filter(var %in% c("TN_mgNL", "PN_mgNL", "TDN_mgNL", "DON_mgNL","DIN_mgNL", "NO3_mgNL", "NH4_mgNL")) %>% 
+          mutate(var=factor(var,levels = c("TN_mgNL", "PN_mgNL", "TDN_mgNL", "DON_mgNL","DIN_mgNL", "NO3_mgNL", "NH4_mgNL"))) %>% 
+          ggplot(aes(x=var, y=temp_synch,fill=var ))+
+          guides(fill=FALSE)+
+          facet_wrap(~subcatch, ncol = 1, scales = "fixed")+
+          geom_bar(stat = "identity",position = "dodge")+
+          ylim(-0.015,0.008)+
+          scale_fill_manual(values=c("#FB7477","#FABE9E","#F8961E","#F9C74F","#90BE6D","#43AA8B","#577590"))+
+          labs(x="Site" ,y="Subcatchment Synchrony" )+
+          theme_bw()
+        
+        temporal_synch %>% 
+          filter(var %in% c("TN_mgNL", "PN_mgNL", "TDN_mgNL", "DON_mgNL","DIN_mgNL", "NO3_mgNL", "NH4_mgNL")) %>% 
+          mutate(var=factor(var,levels = c("TN_mgNL", "PN_mgNL", "TDN_mgNL", "DON_mgNL","DIN_mgNL", "NO3_mgNL", "NH4_mgNL"))) %>% 
+          ggplot(aes(x=subcatch, y=temp_synch,fill=var ))+
+          geom_bar(stat = "identity",position = "dodge")+
+          scale_fill_manual(values=c("#FB7477","#FABE9E","#F8961E","#F9C74F","#90BE6D","#43AA8B","#577590"))+
+          labs(x="Site" ,y="Subcatchment Synchrony" )+
+          theme_bw()
+        
+        
+        # Bar plots for phosphorus synch #
+        
+        #Plot w/ TP,PP,TDP
+        temporal_synch %>% 
+          filter(var %in% c("PP_mgPL","TDP_mgPL","TP_mgPL")) %>%
+          mutate(var=factor(var,levels = c("TP_mgPL","PP_mgPL","TDP_mgPL"))) %>% 
+          ggplot(aes(x=subcatch, y=temp_synch,fill=var ))+
+          #facet_wrap(~subcatch, ncol = 2, scales = "fixed")+
+          geom_bar(stat = "identity",position = "dodge")+
+          scale_fill_manual(values=c("#90BE6D","#43AA8B","#577590"))+
+          labs(x="Site" ,y="Subcatchment Synchrony" )+
+          theme_bw()
+        
+        #Plots w/ all phosphorus virables 
+        temporal_synch %>% 
+          filter(var %in% c("DOP_mgPL","PO4_mgPL","PP_mgPL","TDP_mgPL","TP_mgPL")) %>%
+          mutate(var=factor(var,levels = c("TP_mgPL","PP_mgPL","TDP_mgPL","DOP_mgPL","PO4_mgPL"))) %>% 
+          ggplot(aes(x=var, y=temp_synch,fill=var ))+
+          guides(fill=FALSE)+
+          facet_wrap(~subcatch, ncol = 1, scales = "fixed")+
+          geom_bar(stat = "identity",position = "dodge")+
+          scale_fill_manual(values=c("#FB7477","#FABE9E","#F8961E","#F9C74F","#90BE6D","#43AA8B","#577590"))+
+          labs(x="Site" ,y="Subcatchment Synchrony" )+
+          theme_bw()
+        
+        temporal_synch %>% 
+          filter(var %in% c("DOP_mgPL","PO4_mgPL","PP_mgPL","TDP_mgPL","TP_mgPL")) %>%
+          mutate(var=factor(var,levels = c("TP_mgPL","PP_mgPL","TDP_mgPL","DOP_mgPL","PO4_mgPL"))) %>% 
+          ggplot(aes(x=subcatch, y=temp_synch,fill=var ))+
+          geom_bar(stat = "identity",position = "dodge")+
+          scale_fill_manual(values=c("#FB7477","#FABE9E","#F8961E","#F9C74F","#90BE6D","#43AA8B","#577590"))+
+          labs(x="Site" ,y="Subcatchment Synchrony" )+
+          theme_bw()
+        
+        # Bar plots for carbon synch #
+        temporal_synch %>% 
+          filter(var=="NPOC_mgCL") %>% 
+          ggplot(aes(x=subcatch, y=temp_synch,fill=var ))+
+          #facet_wrap(~subcatch, ncol = 2, scales = "fixed")+
+          geom_bar(stat = "identity",position = "dodge")+
+          scale_fill_manual(values=c("#90BE6D","#43AA8B","#577590"))+
+          labs(x="Site" ,y="Subcatchment Synchrony" )+
+          theme_bw()
 
             
           
