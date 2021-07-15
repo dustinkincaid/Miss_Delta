@@ -268,6 +268,29 @@ library("cowplot")
     # Drop the instantaneous flux columns
     select(-c(ends_with("mgS"), ends_with("ugS")))
   
+  # Prep subcatchment & outlet data for Abbott calcs
+  temp <-
+    allData %>% 
+    mutate(q_sp = q_cms/catch_area_km2) %>% 
+    pivot_longer(cols = (NPOC_mgCL:PP_mgPL), names_to = "var", values_to = "conc") %>% 
+    select(-c(tss_mgL:Fe_ugS_km2)) %>% 
+    select(-c(date, q_cms, catchment)) %>% 
+    rename(subcatch = site, area_s = catch_area_km2, q_sp_s = q_sp, conc_s = conc)
+  
+  subcatch <-
+    temp %>% 
+    filter(subcatch != "md_lower")
+  
+  outlet <-
+    temp %>% 
+    filter(subcatch == "md_lower") %>% 
+    rename(outlet = subcatch, area_o = area_s, q_sp_o = q_sp_s, conc_o = conc_s)
+  
+  leverage <-
+    full_join(subcatch, outlet, by = c("period", "var")) %>% 
+    # Example of one row
+    mutate(cs_co = conc_s/conc_o)
+
 
 
   # ---- this is where Dustin stopped on 12/29/20 ----  
@@ -312,7 +335,7 @@ library("cowplot")
     pivot_longer(cols = c(NO3_mgS_km2, NH4_mgS_km2, DON_mgS_km2, PN_mgS_km2), names_to = "var", values_to = "conc") %>% 
     # re-order the levels of our new column called var
     mutate(var = ordered(var, levels = c("NO3_mgS_km2", "NH4_mgS_km2", "DON_mgS_km2", "PN_mgS_km2"))) %>% 
-    ggplot(aes(x = ~period, y = conc, fill = site)) +
+    ggplot(aes(x = var, y = conc, fill = site)) +
     facet_wrap(~period, ncol = 1, scales = "free_y") +
     geom_bar(position = "dodge", stat = 'identity')
   
