@@ -266,7 +266,15 @@ library("cowplot")
     mutate_at(vars(c(NPOC_mgS:Fe_ugS)),
               .funs = list("km2" = ~ . / catch_area_km2)) %>% 
     # Drop the instantaneous flux columns
-    select(-c(ends_with("mgS"), ends_with("ugS")))
+    select(-c(ends_with("mgS"), ends_with("ugS"))) %>% 
+    # Calculate molar concentration, specifically micromoles (uM)
+    mutate_at(vars(c(ends_with("mgNL"))),
+              .funs = list("uM" = ~ . *1000/14.007)) %>% 
+    mutate_at(vars(c(ends_with("mgPL"))),
+              .funs = list("uM" = ~ . *1000/30.974)) %>% 
+    # Now let's shorten those long columns names we just created
+    rename_at(vars(c(ends_with("uM"))),
+              .funs = list(~ paste(sub("\\_.*", "", .), "uM", sep = "_")))
   
   # Prep subcatchment & outlet data for Abbott calcs
   temp <-
