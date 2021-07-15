@@ -621,7 +621,7 @@ library("cowplot")
 #---- mg -> mol conversion----
     
     #Filter all data to keep the regular and normalized concentrations for N,P and C
-    Con<-
+    Conc<-
       allData %>% 
       #remove variables
       select(-c(tss_mgL:Fe_ppb_0.45)) %>% 
@@ -631,7 +631,8 @@ library("cowplot")
       pivot_longer(cols = (NPOC_mgCL:PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
       #Change the concentrations from mg to g 
       mutate(gconc=conc/1000)
-  
+
+
     
     
     
