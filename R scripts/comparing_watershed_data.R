@@ -517,6 +517,36 @@ library("cowplot")
       scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
       theme_bw()
     
+    # Dustin added this figure on 7/15/21
+    # Let's look at how each N species (e.g., NO3, NH4, DON, & PN) contributes proportionally to the TN pool
+    #Nitrogen normalized concentrations (proportions, stacked)
+    allData %>% 
+      # Let's replace all negative PN concentrations with 0
+      mutate(PN_mgNL = ifelse(PN_mgNL < 0, 0, PN_mgNL)) %>% 
+      # In theory, when we add NO3, NH4, DON, & PN concentrations, they should equal the TN concentration
+      # However, because we measure NO3, NH4 and TN separately and there is some amount of error in the analytical process
+      # they won't always equal the TN concentration we measured
+      # So if we want to look at how each N species contributes to the TN pool, we should calculate a new TN conc using those species
+      mutate(totalN = NO3_mgNL + NH4_mgNL + DON_mgNL + PN_mgNL,
+             NO3_prop = NO3_mgNL/totalN,
+             NH4_prop = NH4_mgNL/totalN,
+             DON_prop = DON_mgNL/totalN,
+             PN_prop = PN_mgNL/totalN) %>% 
+      # Pivot all proportions into long format
+      pivot_longer(cols = c(NO3_prop, NH4_prop, DON_prop, PN_prop), names_to = "var", values_to = "prop") %>% 
+      # Re-order the levelos of our ew column called va
+      mutate(var = ordered(var, levels = c("PN_prop", "DON_prop", "NH4_prop", "NO3_prop"))) %>%
+      # Plot
+      ggplot(aes(x = site, y = prop, fill = var)) +
+      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      geom_bar(position = "stack", stat = 'identity')+
+      labs(x="Site", y="Proportion of TN")+
+      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
+      theme_bw()
+    # Repeat this plot for P
+          
+      
+    
     #Nitrogen normalized concentrations by month (stacked) without Hungerford
     allData %>% 
       # gather all nutrient data into long format
