@@ -10,6 +10,7 @@
 library("tidyverse")
 library("lubridate")
 library("cowplot")
+library("patchwork")
 
 # setwd('C:/Users/esovc/ownCloud3/Shared/BREE/Watershed Data/Miss_Delta')
 # If you open the R project Miss_delta.Rproj and work on scripts through there, you don't need to set your working directory as you do above
@@ -504,6 +505,7 @@ library("cowplot")
       theme_bw()
     
     #Nitrogen normalized concentrations (stacked)
+    Nnorm<-
     allData %>% 
       # gather all nutrient data into long format
       pivot_longer(cols = c(NO3_mgS_km2, NH4_mgS_km2, DON_mgS_km2, PN_mgS_km2), names_to = "var", values_to = "conc") %>% 
@@ -513,13 +515,19 @@ library("cowplot")
       ggplot(aes(x = site, y = conc, fill = var)) +
       facet_wrap(~period, ncol = 2, scales = "fixed") +
       geom_bar(position = "stack", stat = 'identity')+
-      labs(x="Site",y="Instantaneous Yield (mgN/km2)")+
+      #labs(x="Site",y="Instantaneous Yield (mgN/km2)")+
+      ylab(expression(Instantaneous~Yield~(mg~N~km^{-2})))+
+      xlab("Site")+
       scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
-      theme_bw()
+      theme_bw()+
+      theme(legend.position = "none")+
+      theme(axis.text.x=element_blank(),
+            axis.title.x=element_blank())
     
     # Dustin added this figure on 7/15/21
     # Let's look at how each N species (e.g., NO3, NH4, DON, & PN) contributes proportionally to the TN pool
     #Nitrogen normalized concentrations (proportions, stacked)
+    Nprop<-
     allData %>% 
       # Let's replace all negative PN concentrations with 0
       mutate(PN_mgNL = ifelse(PN_mgNL < 0, 0, PN_mgNL)) %>% 
@@ -534,16 +542,48 @@ library("cowplot")
              PN_prop = PN_mgNL/totalN) %>% 
       # Pivot all proportions into long format
       pivot_longer(cols = c(NO3_prop, NH4_prop, DON_prop, PN_prop), names_to = "var", values_to = "prop") %>% 
-      # Re-order the levelos of our ew column called va
+      # Re-order the levels of our new column called va
       mutate(var = ordered(var, levels = c("PN_prop", "DON_prop", "NH4_prop", "NO3_prop"))) %>%
       # Plot
       ggplot(aes(x = site, y = prop, fill = var)) +
       facet_wrap(~period, ncol = 2, scales = "fixed") +
       geom_bar(position = "stack", stat = 'identity')+
       labs(x="Site", y="Proportion of TN")+
-      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
-      theme_bw()
+      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"),
+                        labels=c("PN","DON","NH4","NO3"))+
+      theme_bw()+
+      theme(axis.text.x=element_blank(),
+            axis.title.x=element_blank(),
+            legend.title = element_blank())
+      
     # Repeat this plot for P
+    Pprop<-
+    allData %>% 
+      # Let's replace all negative PN concentrations with 0
+      mutate(PP_mgPL = ifelse(PP_mgPL < 0, 0, PP_mgPL),
+             DOP_mgPL = ifelse(DOP_mgPL < 0, 0, DOP_mgPL)) %>% 
+      # In theory, when we add NO3, NH4, DON, & PN concentrations, they should equal the TN concentration
+      # However, because we measure NO3, NH4 and TN separately and there is some amount of error in the analytical process
+      # they won't always equal the TN concentration we measured
+      # So if we want to look at how each N species contributes to the TN pool, we should calculate a new TN conc using those species
+      mutate(totalP = PO4_mgPL + DOP_mgPL + PP_mgPL,
+             PO4_prop= PO4_mgPL/totalP,
+             DOP_prop = DOP_mgPL/totalP,
+             PP_prop = PP_mgPL/totalP) %>% 
+      # Pivot all proportions into long format
+      pivot_longer(cols = c(PO4_prop,DOP_prop, PP_prop), names_to = "var", values_to = "prop") %>% 
+      # Re-order the levels of our new column called va
+      mutate(var = ordered(var, levels = c("PP_prop", "DOP_prop", "PO4_prop"))) %>%
+      # Plot
+      ggplot(aes(x = site, y = prop, fill = var)) +
+      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      geom_bar(position = "stack", stat = 'identity')+
+      labs(x="Site", y="Proportion of TP")+
+      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"),
+                        labels=c("PP","DOP","PO4"))+
+      theme_bw()+
+      theme(legend.title = element_blank(),
+            axis.text.x = element_text(angle = 90))
           
       
     
@@ -620,7 +660,8 @@ library("cowplot")
       theme_bw()
     
     #Phosphorus normalized concentrations (stacked)
-    allData %>% 
+    Pnorm<-
+      allData %>% 
       # gather all nutrient data into long format
       pivot_longer(cols = c(DOP_mgS_km2, PO4_mgS_km2,PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
       # re-order the levels of our new column called var
@@ -629,9 +670,25 @@ library("cowplot")
       ggplot(aes(x = site, y = conc, fill = var)) +
       facet_wrap(~period, ncol = 2, scales = "fixed") +
       geom_bar(position = "stack", stat = 'identity')+
-      labs(x="Site",y="Instantaneous Yield (mgP/km2)")+
+      #labs(x="Site",y="Instantaneous Yield (mgP/km2)")+
+      ylab(expression(Instantaneous~Yield~(mg~P~km^{-2})))+
+      xlab("Site")+
       scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
-      theme_bw()
+      theme_bw()+
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 90))
+    
+    #Combine N and P plots
+    (Nnorm+Nprop)/(Pnorm+Pprop)
+    #Save plot
+    ggsave(filename = "plots_Igrena/Plot_NPcombined.pdf",width=7,height = 7,units="in",dpi = 150)
+    
+    
+    
+    
+    
+    
+    
     
     #Phosphorus normalized concentrations by month (stacked) without Hungerford
     allData %>% 
