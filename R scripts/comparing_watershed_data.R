@@ -15,7 +15,7 @@ library("patchwork")
 # setwd('C:/Users/esovc/ownCloud3/Shared/BREE/Watershed Data/Miss_Delta')
 # If you open the R project Miss_delta.Rproj and work on scripts through there, you don't need to set your working directory as you do above
 
-# Read in and tidy data
+# Read in and tidy data ----
   # CHEMISTRY
     # MissDelta
     may <- read_csv("Data/alldata_compiled_2019-05-17.csv", 
@@ -74,6 +74,26 @@ library("patchwork")
                   (r_timestamp >= ymd_hms("2019-08-07 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-08-21 23:59:59", tz = "America/New_York")) |
                      (r_timestamp >= ymd_hms("2019-10-14 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-11-07 23:59:59", tz = "America/New_York"))
              )
+    
+    # Add in other variables measured with YSI at Wade and Hungerford (e.g., water temp)
+    wshed_ysi <- read_csv("Data/allStreamData_2019_compiled_2021-06-25.csv", col_types = cols()) %>% 
+      mutate(r_timestamp = ymd_hms(timestamp, tz = "America/New_York")) %>% 
+      # rename(temp_c = temp, turb_exo2_FNU = turb, q_cms = q)
+      rename(temp_c = temp,q_cms = q) %>% 
+      select(-timestamp)
+      # The YSI was often not logging when grab sample was taken so filter these rows out so
+      # that the join to grab chem below works
+      # filter(!is.na(temp_c))
+    
+    # Calculate daily means
+    wshed_ysi_daily <-
+      wshed_ysi %>% 
+      select(site, r_timestamp, everything()) %>% 
+      group_by(site, date(r_timestamp)) %>% 
+      summarize(across(q_cms:turb, ~ mean(.x, na.rm = T))) %>% 
+      rename(date_wshed = `date(r_timestamp)`) %>% 
+      ungroup()
+    rm(wshed_ysi)
 
   # DISCHARGE
     # Read in Q data from Hungerford & Wade so we can look at where the chem grabs fall on the hydrograph (to avoid using a sample collected during an event)
@@ -89,7 +109,7 @@ library("patchwork")
                (r_timestamp >= ymd_hms("2019-06-19 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-07-17 23:59:59", tz = "America/New_York")) |
                   (r_timestamp >= ymd_hms("2019-08-01 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-08-28 23:59:59", tz = "America/New_York")) |
                      (r_timestamp >= ymd_hms("2019-10-10 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-11-08 23:59:59", tz = "America/New_York")))    
-    rm(q_hford_19, q_wade_19)    
+    rm(q_hford_19, q_wade_19)
   
     # Read in Missisquoi River Q data from Swanton USGS site
     # And calculate Q daily mean
@@ -109,7 +129,7 @@ library("patchwork")
                (r_timestamp >= ymd_hms("2019-10-21 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-10-21 23:59:59", tz = "America/New_York")))  
       
     
-
+# Join dataframes ----
 # Join watershed grab data to discharge to look at how the grabs map on to the hydrograph
   wshed_plusQ <- full_join(q_wshed, wshed_trim) %>% 
     arrange(site, r_timestamp)
@@ -123,6 +143,7 @@ library("patchwork")
       facet_grid(site~month, scales = "free") +
       geom_line(aes(x = r_timestamp, y = q_cms)) +
       geom_point(aes(x = r_timestamp, y = NO3_mgNL), color = "red")
+  rm(wshed_plusQ)
   
 # Let's drop the 7/15, 10/17, and 11/16 samples & add a period & date corresponding to MissDelta sampling period and date
   wshed_trim <- wshed_trim %>% 
@@ -136,8 +157,16 @@ library("patchwork")
     mutate(date_missDel = ifelse(month(r_timestamp) == 5, "2019-05-17",
                                 ifelse(month(r_timestamp) %in% c(6, 7), "2019-07-03",
                                        ifelse(month(r_timestamp) == 8, "2019-08-14", "2019-10-21")))) %>% 
-    mutate(date_missDel = ymd(date_missDel))
+    mutate(date_missDel = ymd(date_missDel),
+           date_wshed = date(r_timestamp)) %>% 
+    # Drop the turb data that was with the grab sample chem; not sure where these values came from; use the turb from wshed_ysi
+    select(-turb_exo2_FNU)
   
+# Add the other YSI variables from Wade and Hungerford
+  wshed_trim <-
+    left_join(wshed_trim, wshed_ysi_daily) %>% 
+    rename(turb_exo2_FNU = turb)
+
 # How different do these concentrations look?
   wshed_trim %>% 
     mutate(mon_day = paste(month(r_timestamp), mday(r_timestamp), sep = "_")) %>% 
@@ -150,8 +179,9 @@ library("patchwork")
 # Let's get one concentration for each MissDel sampling date, so take the mean of the two samples where necessary
   wshed_mean <-
     wshed_trim %>% 
+    select(site, r_timestamp, date_missDel, period, q_cms:turb_exo2_FNU, NPOC_mgCL:PP_mgPL) %>% 
     group_by(site, period, date_missDel) %>% 
-    summarize(across(NPOC_mgCL:PP_mgPL, ~ mean(.x, na.rm = T))) %>% 
+    summarize(across(q_cms:PP_mgPL, ~ mean(.x, na.rm = T))) %>% 
     arrange(site, date_missDel) %>% 
     ungroup() %>% 
     rename(date = date_missDel)
@@ -213,8 +243,9 @@ library("patchwork")
     arrange(site, date) %>% 
     mutate(catchment = ifelse(site == "Wade", "Wade",
                               ifelse(site == "Hungerford", "Hungerford", "Missisquoi"))) %>% 
-    select(site, catchment, everything())
-  
+    select(site, catchment, everything()) %>% 
+    # Drop q_cms for now and add it below
+    select(-q_cms)
   rm(wshed_mean, md_mean)
   
 # Calculate flow-normalized concentrations (conc * discharge) 
@@ -244,6 +275,7 @@ library("patchwork")
               q_miss %>%
                 mutate(catchment = "Missisquoi") %>% 
                 rename(date = r_timestamp))
+  rm(q_daily, q_wshed, q_miss)
   
   # Join q_all to allData & calculate catchment-area normalized flux
   allData <-
