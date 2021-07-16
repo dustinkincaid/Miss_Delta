@@ -443,61 +443,19 @@ library("patchwork")
   
 #----Igrena's ----
 #summer2021
+
+----#Norm & Prop plots----  
+#Normalized Concentration and Proportion Graphs
   
-#Concentration Graphs
+  #Nitrogen 
   
-#Nitrogen 
-  
-    #Nitrogen concentrations by month (not stacked)
-    allData %>%
-      # gather all nutrient data into long format
-      pivot_longer(cols = c(TN_mgNL, PN_mgNL, TDN_mgNL, DON_mgNL, NH4_mgNL, NO3_mgNL), names_to = "var", values_to = "conc") %>% 
-      # re-order the levels of our new column called var
-      mutate(var = ordered(var, levels = c("TN_mgNL", "PN_mgNL", "TDN_mgNL", "DON_mgNL", "NH4_mgNL", "NO3_mgNL"))) %>% 
-      ggplot(aes(x = var, y = conc, fill = site)) +
-      facet_wrap(~period, ncol = 1, scales = "fixed") +
-      geom_bar(position = "dodge", stat = 'identity')+
-      labs(x="Varible",y="Concentration")+
-      #scale_fill_manual(values=c("#FB7477","#FABE9E","#F8961E","#F9C74F","#90BE6D","#43AA8B","#577590"))+
-      theme_bw()
-    
-    #Nitrogen concentrations by month (stacked)
-    allData %>% 
-      # gather all nutrient data into long format
-      pivot_longer(cols = c(NO3_mgNL, NH4_mgNL, DON_mgNL, PN_mgNL), names_to = "var", values_to = "conc") %>% 
-      # re-order the levels of our new column called var
-      mutate(var = ordered(var, levels = c("PN_mgNL", "DON_mgNL", "NH4_mgNL", "NO3_mgNL"))) %>%
-      # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
-      ggplot(aes(x = site, y = conc, fill = var)) +
-      facet_wrap(~period, ncol = 2, scales = "fixed") +
-      geom_bar(position = "stack", stat = 'identity')+
-      labs(x="Site",y="Concentration")+
-      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
-      theme_bw()
-    
-    #Nitrogen concentrations by month (stacked) without Hungerford
-    #Ellie also did this in her graphs, and I thought I would include it again to better visualize the other subcatchment concentrations. 
-    allData %>% 
-      # gather all nutrient data into long format
-      pivot_longer(cols = c(NO3_mgNL, NH4_mgNL, DON_mgNL, PN_mgNL), names_to = "var", values_to = "conc") %>% 
-      # re-order the levels of our new column called var
-      mutate(var = ordered(var, levels = c("PN_mgNL", "DON_mgNL", "NH4_mgNL", "NO3_mgNL"))) %>%
-      # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
-      #omit Hungerford from x axis
-      filter(site %in% c("Wade", "md_dam", "md_fork", "md_upper", "md_lower")) %>% 
-      ggplot(aes(x = site, y = conc, fill = var)) +
-      facet_wrap(~period, ncol = 1, scales = "fixed") +
-      geom_bar(position = "stack", stat = 'identity')+
-      labs(x="Site",y="Concentration")+
-      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
-      theme_bw()
-    
     #Nitrogen normalized concentrations (not stacked)
     allData %>%
       # gather all nutrient data into long format
       pivot_longer(cols = c(TN_mgS_km2, PN_mgS_km2, TDN_mgS_km2, DON_mgS_km2, NH4_mgS_km2, NO3_mgS_km2), names_to = "var", values_to = "conc") %>% 
       # re-order the levels of our new column called var
       mutate(var = ordered(var, levels = c("TN_mgS_km2", "PN_mgS_km2", "TDN_mgS_km2", "DON_mgS_km2", "NH4_mgS_km2", "NO3_mgS_km2"))) %>% 
+      #Plot
       ggplot(aes(x = var, y = conc, fill = site)) +
       facet_wrap(~period, ncol = 1, scales = "fixed") +
       geom_bar(position = "dodge", stat = 'identity')+
@@ -512,6 +470,7 @@ library("patchwork")
       # re-order the levels of our new column called var
       mutate(var = ordered(var, levels = c("PN_mgS_km2", "DON_mgS_km2", "NH4_mgS_km2", "NO3_mgS_km2"))) %>%
       # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
+      #Plot
       ggplot(aes(x = site, y = conc, fill = var)) +
       facet_wrap(~period, ncol = 2, scales = "fixed") +
       geom_bar(position = "stack", stat = 'identity')+
@@ -556,9 +515,62 @@ library("patchwork")
             axis.title.x=element_blank(),
             legend.title = element_blank())
       
-    # Repeat this plot for P
-    Pprop<-
+  
+    #Nitrogen normalized concentrations by month (stacked) without Hungerford
     allData %>% 
+      # gather all nutrient data into long format
+      pivot_longer(cols = c(NO3_mgS_km2, NH4_mgS_km2, DON_mgS_km2, PN_mgS_km2), names_to = "var", values_to = "conc") %>% 
+      # re-order the levels of our new column called var
+      mutate(var = ordered(var, levels = c("PN_mgS_km2", "DON_mgS_km2", "NH4_mgS_km2", "NO3_mgS_km2"))) %>%
+      # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
+      #omit Hungerford from x axis
+      filter(site %in% c("Wade", "md_dam", "md_fork", "md_upper", "md_lower")) %>% 
+      #Plot
+      ggplot(aes(x = site, y = conc, fill = var)) +
+      facet_wrap(~period, ncol = 1, scales = "fixed") +
+      geom_bar(position = "stack", stat = 'identity')+
+      labs(x="Site",y="Instantaneous Yield (mgN/km2)")+
+      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
+      theme_bw()
+
+#Phosphorus 
+    
+    #Phosphorus normalized concentrations (not stacked)
+    allData %>%
+      # gather all nutrient data into long format
+      pivot_longer(cols = c(DOP_mgS_km2, PO4_mgS_km2,PP_mgS_km2,TDP_mgS_km2,TP_mgS_km2), names_to = "var", values_to = "conc") %>% 
+      # re-order the levels of our new column called var
+      mutate(var = ordered(var, levels = c("TP_mgS_km2", "PP_mgS_km2","TDP_mgS_km2","DOP_mgS_km2","PO4_mgS_km2"))) %>% 
+      #Plot
+      ggplot(aes(x = var, y = conc, fill = site)) +
+      facet_wrap(~period, ncol = 1, scales = "fixed") +
+      geom_bar(position = "dodge", stat = 'identity')+
+      labs(x="Variables",y="Instantaneous Yield (mgP/km2)")
+      theme_bw()
+    
+    #Phosphorus normalized concentrations (stacked)
+    Pnorm<-
+      allData %>% 
+      # gather all nutrient data into long format
+      pivot_longer(cols = c(DOP_mgS_km2, PO4_mgS_km2,PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
+      # re-order the levels of our new column called var
+      mutate(var = ordered(var, levels = c("PP_mgS_km2","DOP_mgS_km2","PO4_mgS_km2"))) %>%
+      # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
+      #Plot
+      ggplot(aes(x = site, y = conc, fill = var)) +
+      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      geom_bar(position = "stack", stat = 'identity')+
+      #labs(x="Site",y="Instantaneous Yield (mgP/km2)")+
+      ylab(expression(Instantaneous~Yield~(mg~P~km^{-2})))+
+      xlab("Site")+
+      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
+      theme_bw()+
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 90))
+    
+    #Phosphorus normalized concentrations (proportions, stacked)
+    Pprop<-
+      allData %>% 
       # Let's replace all negative PN concentrations with 0
       mutate(PP_mgPL = ifelse(PP_mgPL < 0, 0, PP_mgPL),
              DOP_mgPL = ifelse(DOP_mgPL < 0, 0, DOP_mgPL)) %>% 
@@ -584,33 +596,127 @@ library("patchwork")
       theme_bw()+
       theme(legend.title = element_blank(),
             axis.text.x = element_text(angle = 90))
-          
-      
-    
-    #Nitrogen normalized concentrations by month (stacked) without Hungerford
+  
+    #Phosphorus normalized concentrations by month (stacked) without Hungerford
     allData %>% 
       # gather all nutrient data into long format
-      pivot_longer(cols = c(NO3_mgS_km2, NH4_mgS_km2, DON_mgS_km2, PN_mgS_km2), names_to = "var", values_to = "conc") %>% 
+      pivot_longer(cols = c(DOP_mgS_km2, PO4_mgS_km2,PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
       # re-order the levels of our new column called var
-      mutate(var = ordered(var, levels = c("PN_mgS_km2", "DON_mgS_km2", "NH4_mgS_km2", "NO3_mgS_km2"))) %>%
+      mutate(var = ordered(var, levels = c("PP_mgS_km2","DOP_mgS_km2","PO4_mgS_km2"))) %>%
       # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
       #omit Hungerford from x axis
       filter(site %in% c("Wade", "md_dam", "md_fork", "md_upper", "md_lower")) %>% 
+      #Plot
+      ggplot(aes(x = site, y = conc, fill = var)) +
+      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      geom_bar(position = "stack", stat = 'identity')+
+      labs(x="Site",y="Instantaneous Yield (mg P/km2)")+
+      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
+      theme_bw()
+    
+    
+#Combine N and P plots
+    (Nnorm+Nprop)/(Pnorm+Pprop)
+    #Save plot
+    ggsave(filename = "plots_Igrena/Plot_NPcombined.pdf",width=7,height = 7,units="in",dpi = 150)
+
+    
+#Carbon (NPOC)
+    
+    #NPOC normalized concentrations by month
+    allData %>% 
+      # gather all nutrient data into long format
+      pivot_longer(cols = NPOC_mgS_km2, names_to = "var", values_to = "conc") %>% 
+      # filter out NA values
+      filter(!is.na("NPOC_mgS_km2")) %>% 
+      #Plot
+      ggplot(aes(x = site, y = conc, fill = var)) +
+      facet_wrap(~period, ncol = 1, scales = "fixed") +
+      geom_bar(stat = "identity") +
+      scale_fill_manual(values="#087E8B")+
+      #labs(x="Site",y="Instantaneous Yield")+
+      ylab(expression(DOC~(mg~C~L^{-1})))+
+      xlab("Site")+
+      theme_bw()
+    
+    
+#mg -> mol conversion
+    
+    #Filter all data to keep the regular and normalized concentrations for N,P and C
+    Conc<-
+      allData %>% 
+      #remove variables
+      select(-c(tss_mgL:Fe_ppb_0.45)) %>% 
+      select(-c(tss_mgS_km2:Fe_ugS_km2)) %>% 
+      select(!c(catchment,date)) %>% 
+      #Arrange regular and normalized concentrations separately
+      pivot_longer(cols = (NPOC_mgCL:PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
+      #Change the concentrations from mg to g 
+      mutate(gconc=conc/1000)
+
+    
+----#Regular Concentration Plots (N,P,DOC)#----
+  
+      
+#Nitrogen 
+    
+    #Nitrogen concentrations by month (not stacked)
+    allData %>%
+      # gather all nutrient data into long format
+      pivot_longer(cols = c(TN_mgNL, PN_mgNL, TDN_mgNL, DON_mgNL, NH4_mgNL, NO3_mgNL), names_to = "var", values_to = "conc") %>% 
+      # re-order the levels of our new column called var
+      mutate(var = ordered(var, levels = c("TN_mgNL", "PN_mgNL", "TDN_mgNL", "DON_mgNL", "NH4_mgNL", "NO3_mgNL"))) %>% 
+      #Plot
+      ggplot(aes(x = var, y = conc, fill = site)) +
+      facet_wrap(~period, ncol = 1, scales = "fixed") +
+      geom_bar(position = "dodge", stat = 'identity')+
+      labs(x="Varible",y="Concentration")+
+      #scale_fill_manual(values=c("#FB7477","#FABE9E","#F8961E","#F9C74F","#90BE6D","#43AA8B","#577590"))+
+      theme_bw()
+    
+    #Nitrogen concentrations by month (stacked)
+    allData %>% 
+      # gather all nutrient data into long format
+      pivot_longer(cols = c(NO3_mgNL, NH4_mgNL, DON_mgNL, PN_mgNL), names_to = "var", values_to = "conc") %>% 
+      # re-order the levels of our new column called var
+      mutate(var = ordered(var, levels = c("PN_mgNL", "DON_mgNL", "NH4_mgNL", "NO3_mgNL"))) %>%
+      # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
+      #Plot
+      ggplot(aes(x = site, y = conc, fill = var)) +
+      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      geom_bar(position = "stack", stat = 'identity')+
+      labs(x="Site",y="Concentration")+
+      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
+      theme_bw()
+    
+    #Nitrogen concentrations by month (stacked) without Hungerford
+    #Ellie also did this in her graphs, and I thought I would include it again to better visualize the other subcatchment concentrations. 
+    allData %>% 
+      # gather all nutrient data into long format
+      pivot_longer(cols = c(NO3_mgNL, NH4_mgNL, DON_mgNL, PN_mgNL), names_to = "var", values_to = "conc") %>% 
+      # re-order the levels of our new column called var
+      mutate(var = ordered(var, levels = c("PN_mgNL", "DON_mgNL", "NH4_mgNL", "NO3_mgNL"))) %>%
+      # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
+      #omit Hungerford from x axis
+      filter(site %in% c("Wade", "md_dam", "md_fork", "md_upper", "md_lower")) %>% 
+      #Plot
       ggplot(aes(x = site, y = conc, fill = var)) +
       facet_wrap(~period, ncol = 1, scales = "fixed") +
       geom_bar(position = "stack", stat = 'identity')+
-      labs(x="Site",y="Instantaneous Yield (mgN/km2)")+
+      labs(x="Site",y="Concentration")+
       scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
       theme_bw()
-
+    
+    
 #Phosphorus 
     
     #Phosphorus concentrations by month (not stacked)
     allData %>%
-    # gather all nutrient data into long format
-    pivot_longer(cols = c(DOP_mgPL, PO4_mgPL,PP_mgPL,TDP_mgPL,TP_mgPL), names_to = "var", values_to = "conc") %>% 
+      # gather all nutrient data into long format
+      pivot_longer(cols = c(DOP_mgPL, PO4_mgPL,PP_mgPL,TDP_mgPL,TP_mgPL), names_to = "var", values_to = "conc") %>% 
       # re-order the levels of our new column called var
       mutate(var = ordered(var, levels = c("TP_mgPL", "PP_mgPL","TDP_mgPL","DOP_mgPL","PO4_mgPL"))) %>% 
+      #Plot
       ggplot(aes(x = var, y = conc, fill = site)) +
       facet_wrap(~period, ncol = 1, scales = "fixed") +
       geom_bar(position = "dodge", stat = 'identity')+
@@ -624,6 +730,7 @@ library("patchwork")
       # re-order the levels of our new column called var
       mutate(var = ordered(var, levels = c("PP_mgPL","DOP_mgPL","PO4_mgPL"))) %>%
       # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
+      #Plot
       ggplot(aes(x = site, y = conc, fill = var)) +
       facet_wrap(~period, ncol = 2, scales = "fixed") +
       geom_bar(position = "stack", stat = 'identity')+
@@ -640,71 +747,14 @@ library("patchwork")
       # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
       #omit Hungerford from x axis
       filter(site %in% c("Wade", "md_dam", "md_fork", "md_upper", "md_lower")) %>% 
+      #Plot
       ggplot(aes(x = site, y = conc, fill = var)) +
       facet_wrap(~period, ncol = 1, scales = "fixed") +
       geom_bar(position = "stack", stat = 'identity')+
       labs(x="Site",y="Concentration")+
       scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
       theme_bw()
-    
-    #Phosphorus normalized concentrations (not stacked)
-    allData %>%
-      # gather all nutrient data into long format
-      pivot_longer(cols = c(DOP_mgS_km2, PO4_mgS_km2,PP_mgS_km2,TDP_mgS_km2,TP_mgS_km2), names_to = "var", values_to = "conc") %>% 
-      # re-order the levels of our new column called var
-      mutate(var = ordered(var, levels = c("TP_mgS_km2", "PP_mgS_km2","TDP_mgS_km2","DOP_mgS_km2","PO4_mgS_km2"))) %>% 
-      ggplot(aes(x = var, y = conc, fill = site)) +
-      facet_wrap(~period, ncol = 1, scales = "fixed") +
-      geom_bar(position = "dodge", stat = 'identity')+
-      labs(x="Variables",y="Instantaneous Yield (mgP/km2)")
-      theme_bw()
-    
-    #Phosphorus normalized concentrations (stacked)
-    Pnorm<-
-      allData %>% 
-      # gather all nutrient data into long format
-      pivot_longer(cols = c(DOP_mgS_km2, PO4_mgS_km2,PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
-      # re-order the levels of our new column called var
-      mutate(var = ordered(var, levels = c("PP_mgS_km2","DOP_mgS_km2","PO4_mgS_km2"))) %>%
-      # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
-      ggplot(aes(x = site, y = conc, fill = var)) +
-      facet_wrap(~period, ncol = 2, scales = "fixed") +
-      geom_bar(position = "stack", stat = 'identity')+
-      #labs(x="Site",y="Instantaneous Yield (mgP/km2)")+
-      ylab(expression(Instantaneous~Yield~(mg~P~km^{-2})))+
-      xlab("Site")+
-      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
-      theme_bw()+
-      theme(legend.position = "none",
-            axis.text.x = element_text(angle = 90))
-    
-    #Combine N and P plots
-    (Nnorm+Nprop)/(Pnorm+Pprop)
-    #Save plot
-    ggsave(filename = "plots_Igrena/Plot_NPcombined.pdf",width=7,height = 7,units="in",dpi = 150)
-    
-    
-    
-    
-    
-    
-    
-    
-    #Phosphorus normalized concentrations by month (stacked) without Hungerford
-    allData %>% 
-      # gather all nutrient data into long format
-      pivot_longer(cols = c(DOP_mgS_km2, PO4_mgS_km2,PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
-      # re-order the levels of our new column called var
-      mutate(var = ordered(var, levels = c("PP_mgS_km2","DOP_mgS_km2","PO4_mgS_km2"))) %>%
-      # replace("PN_mgNL" <= 0, 0.01) %>%   need to figure out how to replace negative values
-      #omit Hungerford from x axis
-      filter(site %in% c("Wade", "md_dam", "md_fork", "md_upper", "md_lower")) %>% 
-      ggplot(aes(x = site, y = conc, fill = var)) +
-      facet_wrap(~period, ncol = 2, scales = "fixed") +
-      geom_bar(position = "stack", stat = 'identity')+
-      labs(x="Site",y="Instantaneous Yield (mgP/km2)")+
-      scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
-      theme_bw()
+
     
 #Carbon (NPOC)
     
@@ -714,43 +764,15 @@ library("patchwork")
       pivot_longer(cols = NPOC_mgCL, names_to = "var", values_to = "NPOC_mgCL") %>% 
       # filter out NA values
       filter(!is.na("NPOC_mgCL")) %>% 
+      #Plot
       ggplot(aes(x = site, y = NPOC_mgCL, fill = var)) +
       facet_wrap(~period, ncol = 1, scales = "fixed") +
       geom_bar(stat = "identity") +
       scale_fill_manual(values="#087E8B")+
-      labs(x="Site",y="Concentration")+
-      #ylab(expression(DOC~(mg~C~L^{-1}))) +
+      #labs(x="Site",y="Concentration")+
+      ylab(expression(DOC~(mg~C~L^{-1}))) +
+      xlab("Site")+
       theme_bw()
-    
-    #NPOC normalized concentrations by month
-    allData %>% 
-      # gather all nutrient data into long format
-      pivot_longer(cols = NPOC_mgS_km2, names_to = "var", values_to = "conc") %>% 
-      # filter out NA values
-      filter(!is.na("NPOC_mgS_km2")) %>% 
-      ggplot(aes(x = site, y = conc, fill = var)) +
-      facet_wrap(~period, ncol = 1, scales = "fixed") +
-      geom_bar(stat = "identity") +
-      scale_fill_manual(values="#087E8B")+
-      labs(x="Site",y="Instantaneous Yield")+
-      #ylab(expression(DOC~(mg~C~L^{-1})))+
-      theme_bw()
-    
-#---- mg -> mol conversion----
-    
-    #Filter all data to keep the regular and normalized concentrations for N,P and C
-    Conc<-
-      allData %>% 
-      #remove variables
-      select(-c(tss_mgL:Fe_ppb_0.45)) %>% 
-      select(-c(tss_mgS_km2:Fe_ugS_km2)) %>% 
-      select(!c(catchment,date)) %>% 
-      #Arrange regular and normalized concentratios separately
-      pivot_longer(cols = (NPOC_mgCL:PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
-      #Change the concentrations from mg to g 
-      mutate(gconc=conc/1000)
-
-
     
     
     
