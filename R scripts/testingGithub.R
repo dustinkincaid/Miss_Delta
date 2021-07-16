@@ -5,3 +5,6 @@
 #Finally !!! 
 
 #Push test.
+
+
+# WHY IS GITHUB SO HARD TO WORK WITH?! ESPECIALLY ON A FRIDAY!
