@@ -15,7 +15,7 @@ library("patchwork")
 # setwd('C:/Users/esovc/ownCloud3/Shared/BREE/Watershed Data/Miss_Delta')
 # If you open the R project Miss_delta.Rproj and work on scripts through there, you don't need to set your working directory as you do above
 
-# Read in and tidy data ----
+# Read in and tidy data
   # CHEMISTRY
     # MissDelta
     may <- read_csv("Data/alldata_compiled_2019-05-17.csv", 
@@ -74,26 +74,6 @@ library("patchwork")
                   (r_timestamp >= ymd_hms("2019-08-07 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-08-21 23:59:59", tz = "America/New_York")) |
                      (r_timestamp >= ymd_hms("2019-10-14 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-11-07 23:59:59", tz = "America/New_York"))
              )
-    
-    # Add in other variables measured with YSI at Wade and Hungerford (e.g., water temp)
-    wshed_ysi <- read_csv("Data/allStreamData_2019_compiled_2021-06-25.csv", col_types = cols()) %>% 
-      mutate(r_timestamp = ymd_hms(timestamp, tz = "America/New_York")) %>% 
-      # rename(temp_c = temp, turb_exo2_FNU = turb, q_cms = q)
-      rename(temp_c = temp,q_cms = q) %>% 
-      select(-timestamp)
-      # The YSI was often not logging when grab sample was taken so filter these rows out so
-      # that the join to grab chem below works
-      # filter(!is.na(temp_c))
-    
-    # Calculate daily means
-    wshed_ysi_daily <-
-      wshed_ysi %>% 
-      select(site, r_timestamp, everything()) %>% 
-      group_by(site, date(r_timestamp)) %>% 
-      summarize(across(q_cms:turb, ~ mean(.x, na.rm = T))) %>% 
-      rename(date_wshed = `date(r_timestamp)`) %>% 
-      ungroup()
-    rm(wshed_ysi)
 
   # DISCHARGE
     # Read in Q data from Hungerford & Wade so we can look at where the chem grabs fall on the hydrograph (to avoid using a sample collected during an event)
@@ -109,7 +89,7 @@ library("patchwork")
                (r_timestamp >= ymd_hms("2019-06-19 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-07-17 23:59:59", tz = "America/New_York")) |
                   (r_timestamp >= ymd_hms("2019-08-01 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-08-28 23:59:59", tz = "America/New_York")) |
                      (r_timestamp >= ymd_hms("2019-10-10 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-11-08 23:59:59", tz = "America/New_York")))    
-    rm(q_hford_19, q_wade_19)
+    rm(q_hford_19, q_wade_19)    
   
     # Read in Missisquoi River Q data from Swanton USGS site
     # And calculate Q daily mean
@@ -129,7 +109,7 @@ library("patchwork")
                (r_timestamp >= ymd_hms("2019-10-21 00:00:00", tz = "America/New_York") & r_timestamp <= ymd_hms("2019-10-21 23:59:59", tz = "America/New_York")))  
       
     
-# Join dataframes ----
+
 # Join watershed grab data to discharge to look at how the grabs map on to the hydrograph
   wshed_plusQ <- full_join(q_wshed, wshed_trim) %>% 
     arrange(site, r_timestamp)
@@ -143,7 +123,6 @@ library("patchwork")
       facet_grid(site~month, scales = "free") +
       geom_line(aes(x = r_timestamp, y = q_cms)) +
       geom_point(aes(x = r_timestamp, y = NO3_mgNL), color = "red")
-  rm(wshed_plusQ)
   
 # Let's drop the 7/15, 10/17, and 11/16 samples & add a period & date corresponding to MissDelta sampling period and date
   wshed_trim <- wshed_trim %>% 
@@ -157,16 +136,8 @@ library("patchwork")
     mutate(date_missDel = ifelse(month(r_timestamp) == 5, "2019-05-17",
                                 ifelse(month(r_timestamp) %in% c(6, 7), "2019-07-03",
                                        ifelse(month(r_timestamp) == 8, "2019-08-14", "2019-10-21")))) %>% 
-    mutate(date_missDel = ymd(date_missDel),
-           date_wshed = date(r_timestamp)) %>% 
-    # Drop the turb data that was with the grab sample chem; not sure where these values came from; use the turb from wshed_ysi
-    select(-turb_exo2_FNU)
+    mutate(date_missDel = ymd(date_missDel))
   
-# Add the other YSI variables from Wade and Hungerford
-  wshed_trim <-
-    left_join(wshed_trim, wshed_ysi_daily) %>% 
-    rename(turb_exo2_FNU = turb)
-
 # How different do these concentrations look?
   wshed_trim %>% 
     mutate(mon_day = paste(month(r_timestamp), mday(r_timestamp), sep = "_")) %>% 
@@ -179,9 +150,8 @@ library("patchwork")
 # Let's get one concentration for each MissDel sampling date, so take the mean of the two samples where necessary
   wshed_mean <-
     wshed_trim %>% 
-    select(site, r_timestamp, date_missDel, period, q_cms:turb_exo2_FNU, NPOC_mgCL:PP_mgPL) %>% 
     group_by(site, period, date_missDel) %>% 
-    summarize(across(q_cms:PP_mgPL, ~ mean(.x, na.rm = T))) %>% 
+    summarize(across(NPOC_mgCL:PP_mgPL, ~ mean(.x, na.rm = T))) %>% 
     arrange(site, date_missDel) %>% 
     ungroup() %>% 
     rename(date = date_missDel)
@@ -243,9 +213,8 @@ library("patchwork")
     arrange(site, date) %>% 
     mutate(catchment = ifelse(site == "Wade", "Wade",
                               ifelse(site == "Hungerford", "Hungerford", "Missisquoi"))) %>% 
-    select(site, catchment, everything()) %>% 
-    # Drop q_cms for now and add it below
-    select(-q_cms)
+    select(site, catchment, everything())
+  
   rm(wshed_mean, md_mean)
   
 # Calculate flow-normalized concentrations (conc * discharge) 
@@ -275,7 +244,6 @@ library("patchwork")
               q_miss %>%
                 mutate(catchment = "Missisquoi") %>% 
                 rename(date = r_timestamp))
-  rm(q_daily, q_wshed, q_miss)
   
   # Join q_all to allData & calculate catchment-area normalized flux
   allData <-
@@ -309,31 +277,7 @@ library("patchwork")
     rename_at(vars(c(ends_with("uM"))),
               .funs = list(~ paste(sub("\\_.*", "", .), "uM", sep = "_")))
   
-  # Prep subcatchment & outlet data for Abbott calcs
-  temp <-
-    allData %>% 
-    mutate(q_sp = q_cms/catch_area_km2) %>% 
-    pivot_longer(cols = (NPOC_mgCL:PP_mgPL), names_to = "var", values_to = "conc") %>% 
-    select(-c(tss_mgL:Fe_ugS_km2)) %>% 
-    select(-c(date, q_cms, catchment)) %>% 
-    rename(subcatch = site, area_s = catch_area_km2, q_sp_s = q_sp, conc_s = conc)
   
-  subcatch <-
-    temp %>% 
-    filter(subcatch != "md_lower")
-  
-  outlet <-
-    temp %>% 
-    filter(subcatch == "md_lower") %>% 
-    rename(outlet = subcatch, area_o = area_s, q_sp_o = q_sp_s, conc_o = conc_s)
-  
-  leverage <-
-    full_join(subcatch, outlet, by = c("period", "var")) %>% 
-    # Example of one row
-    mutate(cs_co = conc_s/conc_o)
-
-
-
   # ---- this is where Dustin stopped on 12/29/20 ----  
   
 # ---- Ellie's graphs ----
@@ -671,6 +615,53 @@ library("patchwork")
       xlab("Site")+
       theme_bw()
     
+----#Relative Difference#----
+    
+    rels_vals<-
+      allData %>% 
+      select(site, period, TN_mgS_km2, NO3_mgS_km2, TP_mgS_km2, PO4_mgS_km2, NPOC_mgS_km2)
+    
+    #Reference md_lower 
+    ref<-
+      rels_vals%>% 
+      filter(site == "md_lower") %>% 
+      rename( lower = site , ref_TN = TN_mgS_km2, ref_NO3 = NO3_mgS_km2, ref_TP = TP_mgS_km2 , ref_PO4 = PO4_mgS_km2 , ref_DOC = NPOC_mgS_km2 )
+    
+    #Site values without md_lower
+    temp_site<-
+      rels_vals %>% 
+      filter(site != "md_lower")
+    
+    #Join both tables 
+    relat_diff<-
+      full_join(temp_site,ref, by = "period") %>% 
+      #Calculate relative difference for TN
+      mutate(TN_diff=(TN_mgS_km2 - ref_TN)/ref_TN * 100) %>% 
+      #Calculate relative difference for NO3
+      mutate(NO3_diff=(NO3_mgS_km2 - ref_NO3)/ref_NO3 * 100) %>% 
+      #Calculate relative difference for TP  
+      mutate(TP_diff=(TP_mgS_km2 - ref_TP)/ref_TP * 100) %>% 
+      #Calculate relative difference for PO4  
+      mutate(PO4_diff=(PO4_mgS_km2 - ref_PO4)/ref_PO4 * 100) %>% 
+      #Calculate relative difference for DOC  
+      mutate(DOC_diff=(NPOC_mgS_km2 - ref_DOC)/ref_DOC * 100)
+    
+#Plotting Relative Difference
+    #Total Nitrogen and NO3
+    relat_diff %>% 
+    select(site,period,TN_diff,NO3_diff,TP_diff,PO4_diff,DOC_diff) %>% 
+    pivot_longer(cols = (TN_diff:DOC_diff), names_to = "var", values_to = "rel_diff") %>%
+    filter(var == c("TN_diff","NO3_diff")) %>% 
+    #Plot
+    ggplot(aes(x = site, y = rel_diff, fill = var)) +
+      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      geom_bar(position = "dodge", stat = 'identity')+
+      #labs(x="Varible",y="Concentration")+
+      #scale_fill_manual(values=c("#FB7477","#FABE9E","#F8961E","#F9C74F","#90BE6D","#43AA8B","#577590"))+
+      theme_bw()
+      
+      
+
     
 #mg -> mol conversion
     
@@ -685,11 +676,10 @@ library("patchwork")
       pivot_longer(cols = (NPOC_mgCL:PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
       #Change the concentrations from mg to g 
       mutate(gconc=conc/1000)
-
     
+
 ----#Regular Concentration Plots (N,P,DOC)#----
-  
-      
+ 
 #Nitrogen 
     
     #Nitrogen concentrations by month (not stacked)
