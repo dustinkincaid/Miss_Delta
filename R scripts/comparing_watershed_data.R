@@ -592,9 +592,9 @@ library("patchwork")
     
     
 #Combine N and P plots
-    (Nnorm+Nprop)/(Pnorm+Pprop)
+    (Nnorm+Nprop)/(Pnorm+Pprop) %>% 
     #Save plot
-    ggsave(filename = "plots_Igrena/Plot_NPcombined.pdf",width=7,height = 7,units="in",dpi = 150)
+    ggsave(filename = "plots_Igrena/Plot_NPcombined.pdf",width=9,height = 7,units="in",dpi = 150)
 
     
 #Carbon (NPOC)
@@ -648,19 +648,65 @@ library("patchwork")
     
 #Plotting Relative Difference
     #Total Nitrogen and NO3
+    N_diff<-
     relat_diff %>% 
     select(site,period,TN_diff,NO3_diff,TP_diff,PO4_diff,DOC_diff) %>% 
     pivot_longer(cols = (TN_diff:DOC_diff), names_to = "var", values_to = "rel_diff") %>%
-    filter(var == c("TN_diff","NO3_diff")) %>% 
+    filter(var %in% c("TN_diff","NO3_diff")) %>% 
     #Plot
     ggplot(aes(x = site, y = rel_diff, fill = var)) +
       facet_wrap(~period, ncol = 2, scales = "fixed") +
       geom_bar(position = "dodge", stat = 'identity')+
-      #labs(x="Varible",y="Concentration")+
-      #scale_fill_manual(values=c("#FB7477","#FABE9E","#F8961E","#F9C74F","#90BE6D","#43AA8B","#577590"))+
-      theme_bw()
+      labs(x="Site",y="% Relative Difference")+
+      scale_fill_manual(values = c("#41878A","#7FC4C4"),
+                        labels= c("NO3","TN"))+
+      theme_bw()+
+      theme(legend.title = element_blank(),
+            axis.text.x = element_text(angle = 90))
       
-      
+    
+    #Total Phosphorus and PO4
+    P_diff<-
+    relat_diff %>% 
+      select(site,period,TN_diff,NO3_diff,TP_diff,PO4_diff,DOC_diff) %>% 
+      pivot_longer(cols = (TN_diff:DOC_diff), names_to = "var", values_to = "rel_diff") %>%
+      filter(var %in% c("TP_diff","PO4_diff")) %>% 
+      #Plot
+      ggplot(aes(x = site, y = rel_diff, fill = var)) +
+      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      geom_bar(position = "dodge", stat = 'identity')+
+      scale_fill_manual(values = c("#5B9433","#234B34"),
+                        labels= c("PO4","TP"))+
+      labs(x="Site",y="% Relative Difference")+
+      theme_bw()+
+      theme(legend.title = element_blank(),
+            axis.text.x = element_text(angle = 90),        
+            axis.title.y = element_blank())
+    
+    
+    #Carbon (DOC)
+    C_diff<-
+    relat_diff %>% 
+      select(site,period,TN_diff,NO3_diff,TP_diff,PO4_diff,DOC_diff) %>% 
+      pivot_longer(cols = (TN_diff:DOC_diff), names_to = "var", values_to = "rel_diff") %>%
+      filter(var %in% "DOC_diff") %>% 
+      #Plot
+      ggplot(aes(x = site, y = rel_diff, fill = var)) +
+      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      geom_bar(position = "dodge", stat = 'identity')+
+      labs(x="Site",y="% Relative Difference")+
+      scale_fill_manual(values = c("#EAA046"),
+                        labels="DOC")+
+      theme_bw()+
+      theme(legend.title = element_blank(),
+            axis.text.x = element_text(angle = 90),        
+            axis.title.y = element_blank())
+    
+  #Join relative difference plots
+    (N_diff+P_diff+C_diff)
+    #Save plot
+    ggsave(filename = "plots_Igrena/Plot_rela_diff_NPC.pdf",width=18,height = 6,units="in",dpi = 150)
+    
 
     
 #mg -> mol conversion
