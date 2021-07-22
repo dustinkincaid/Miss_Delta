@@ -229,11 +229,13 @@ library("patchwork")
   md_mean <- 
     bind_rows(dam, upper, fork, lower) %>% 
     group_by(date, section) %>% 
-    summarize(across(c(NO3_UM:Fe_ppb_0.45, DIN_mgNL:PP_mgPL), ~ mean(.x, na.rm = T))) %>% 
+    summarize(across(c(temp_c:Fe_ppb_0.45, DIN_mgNL:PP_mgPL), ~ mean(.x, na.rm = T))) %>% 
     rename(site = section) %>% 
     mutate(period = ifelse(month(date) == 5, "May",
                            ifelse(month(date) == 7, "July",
-                                  ifelse(month(date) == 8, "August", "October"))))
+                                  ifelse(month(date) == 8, "August", "October")))) %>% 
+    rename(DO_mgL = do_mgl, DO_sat = do_per, spCond = spc_uscm, pH = ph, fDOM = fdom_qsu) %>% 
+    select(-c(scan_NO3_mgNL, scan_DOC_mgCL))
   rm(md_main, dam, upper, fork, lower)
   
 # Bind the Wade and Hford concentrations with MD concentrations
