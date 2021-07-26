@@ -799,19 +799,50 @@ library("patchwork")
     
 ----#Ratios and %----
 
-# % to add on normalized concentration plots  
+# % to add on normalized concentration plots 
+#Compare the difference in TN,NO3,TP and PO4 concentrations in percent across md_dam to md_lower
+   
+    dam<-
+      allData %>% 
+      select(site,period,TN_mgS_km2,NO3_mgS_km2,TP_mgS_km2,PO4_mgS_km2) %>% 
+      filter(site %in% c("md_dam"))
     
+    low<-
+      allData %>% 
+      select(site,period,TN_mgS_km2,NO3_mgS_km2,TP_mgS_km2,PO4_mgS_km2) %>% 
+      filter(site %in% c("md_lower")) %>% 
+      rename(lower=site,low_TN= TN_mgS_km2,low_NO3= NO3_mgS_km2,low_TP= TP_mgS_km2, low_PO4= PO4_mgS_km2)
     
-    
+    #Calculate the percent 
+    Percent<- 
+      full_join(dam,low, by = "period") %>% 
+      mutate(TN_perc=(TN_mgS_km2-low_TN)*100) %>% 
+      mutate(NO3_perc=(NO3_mgS_km2-low_NO3)*100) %>% 
+      mutate(TP_perc=(TP_mgS_km2-low_TP)*100) %>% 
+      mutate(PO4_perc=(PO4_mgS_km2-low_TN)*100)  #NOTE: When I multiply the difference by 100, some values are high  
+             
+
 #RAtios 
+    
+    #mg -> mol conversion
+    
+    #Filter molar concentrations
+    temp_mol<-
+      allData %>% 
+      select(c(site,period,ends_with("_UM")))
+
+    
+Ratios<-
   #TN:TP
-    allData %>% 
-      mutate(TN:TP=)
-    
+  temp_mol %>% 
+      mutate(TN_TP=TN_uM/TP_uM) %>% 
   #NO3:SRP
-    
+      mutate(NO3_PO4=NO3_uM/PO4_uM) %>% 
   #TDN:TDP
-    
+      mutate(TDN_TDP=TDN_uM/TDP_uM)
+
+#Ratio plots 
+
 
 ----#Regular Concentration Plots (N,P,DOC)#----
  
