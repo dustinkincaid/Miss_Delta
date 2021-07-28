@@ -11,6 +11,7 @@ library("tidyverse")
 library("lubridate")
 library("cowplot")
 library("patchwork")
+library("ggtext")
 
 # setwd('C:/Users/esovc/ownCloud3/Shared/BREE/Watershed Data/Miss_Delta')
 # If you open the R project Miss_delta.Rproj and work on scripts through there, you don't need to set your working directory as you do above
@@ -474,37 +475,61 @@ library("patchwork")
       theme_bw()
     
     #Nitrogen normalized concentrations (stacked)
-  Nnorm<-
+  #Nnorm<-
   allData %>% 
     # gather all nutrient data into long format
-    pivot_longer(cols = c(NO3_mgS_km2, NH4_mgS_km2, DON_mgS_km2, PN_mgS_km2), names_to = "var", values_to = "conc") %>% 
-    # re-order the levels of our new column called var
-    mutate(var = ordered(var, levels = c("PN_mgS_km2", "DON_mgS_km2", "NH4_mgS_km2", "NO3_mgS_km2"))) %>%
-    # Replace all negative concentrations with 0
-    mutate(conc= ifelse(conc < 0, 0, conc)) %>% 
+      pivot_longer(cols = c(NO3_mgS_km2, NH4_mgS_km2, DON_mgS_km2, PN_mgS_km2), names_to = "var", values_to = "conc") %>% 
+    #re-order the levels of our new column called var
+      mutate(var = ordered(var, levels = c("PN_mgS_km2", "DON_mgS_km2", "NH4_mgS_km2", "NO3_mgS_km2"))) %>%
+    #Replace all negative concentrations with 0
+      mutate(conc= ifelse(conc < 0, 0, conc)) %>% 
     #Plot
-    ggplot(aes(x = site, y = conc, fill = var)) +
-    facet_wrap(~period, ncol = 2, scales = "fixed") +
-    geom_bar(position = "stack",stat = 'identity')+
-    ylab(expression(Instantaneous~Yield~(mg~N~km^{-2})))+
-    xlab("Site")+
-    theme_bw()+
+      ggplot(aes(x = site, y = conc, fill = var)) +
+      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      geom_bar(position = "stack",stat = 'identity')+
+      ylab(expression(Instantaneous~Yield~(mg~N~km^{-2})))+
+      xlab("Site")+
+      theme_bw()+
+    #Lines to identify Relative Difference
+    #Line for md_dam with reference to md_lower
+    #Horizontal line
+      geom_linerange(aes(xmin = 2.5, xmax = 6.5, y = 60),color = "#bdb2ff", size = 1)+
+    #Vertical lines
+      geom_linerange(aes(x = 2.5, ymin = 0, ymax = 60),color = "#bdb2ff", size = 1) +
+      geom_linerange(aes(x = 6.5, ymin = 0, ymax = 60),color = "#bdb2ff", size = 2) +
+    #Line for md_upper with reference to md_lower
+    #Horizontal line
+      geom_linerange(aes(xmin = 3.5, xmax = 6.5, y = 35),color = "#b5e48c", size = 1)+
+    #Vertical lines
+      geom_linerange(aes(x = 3.5, ymin = 0, ymax = 35),color = "#b5e48c", size = 1) +
+      geom_linerange(aes(x = 6.5, ymin = 0, ymax = 35),color = "#b5e48c", size = 1) +
     #Add line and text to divide sites
-    geom_vline(xintercept = 3.5, size=1.5)+
-    geom_text(aes(x=2, y=125, label= "Headwater Catchments"),size=5, fontface = "bold",stat = "unique")+
-    geom_text(aes(x=5, y=125,label= "Wetland Complex"),size=5, fontface = "bold",stat = "unique")+
-    #Sites used to commppared %
-    #Make square
-    geom_rect(aes(xmin=2.5, xmax=6.5, ymin=0, ymax=50), alpha = 0.01)+
+    #Vertical line
+      geom_vline(xintercept = 2.5, size=1)+
+    #NOTE: Igrena - "I removed the next 2 lines because the words did not fit the plot when saved"
+      # geom_text(aes(x=1, y=100, label= "Headwater \n Catchments"),size=2, fontface = "plain",stat = "unique")+
+      # geom_text(aes(x=4.5, y=105,label= "Wetland Complex"),size=2, fontface = "plain",stat = "unique")+
     #Fill colors and arrange axis
-    scale_fill_manual(values=c("#3a0ca3","#118ab2","#06d6a0","#bee9e8"), labels=c("PN","DON","NH4","NO3"))+
-    theme(legend.title=element_blank(),legend.position = "bottom", axis.text.x = element_text(angle = 90))
+      scale_fill_manual(values=c("#3a0ca3","#118ab2","#06d6a0","#bee9e8"), labels=c("PN","DON","NH4","NO3"))+
+    #Change legend text size
+    theme(legend.title=element_blank(),legend.text=element_text(size=12),
+          #Remove grid lines
+          panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
+          #Change text size
+          strip.text=element_text(size=14),
+          #Arrange axis labels and axis text size
+          axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
   
-    
+  
+  #Save plot
+  ggsave(filename = "plots_Igrena/Plot_Nnorm.pdf",width=13,height = 12,units="cm",dpi = 300)
+  
+  
     # Dustin added this figure on 7/15/21
     # Let's look at how each N species (e.g., NO3, NH4, DON, & PN) contributes proportionally to the TN pool
     #Nitrogen normalized concentrations (proportions, stacked)
-  Nprop<-
+  
+  #Nprop<-
   allData %>% 
     # Let's replace all negative PN concentrations with 0
     mutate(PN_mgNL = ifelse(PN_mgNL < 0, 0, PN_mgNL)) %>% 
@@ -529,7 +554,17 @@ library("patchwork")
     scale_fill_manual(values=c("#3a0ca3","#118ab2","#06d6a0","#bee9e8"),
                       labels=c("PN","DON","NH4","NO3"))+
     theme_bw()+
-    theme(legend.title=element_blank(), axis.text.x = element_text(angle = 90))
+    #Change legend text size
+    theme(legend.title=element_blank(),legend.text=element_text(size=12),
+          #Remove grid lines
+          panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
+          #Change text size
+          strip.text=element_text(size=14),
+          #Arrange axis labels and axis text size
+          axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
+  
+  #Save plot
+  ggsave(filename = "plots_Igrena/Plot_Nprop.pdf",width=13,height = 12,units="cm",dpi = 300)
       
   
     #Nitrogen normalized concentrations by month (stacked) without Hungerford
@@ -565,7 +600,7 @@ library("patchwork")
       theme_bw()
     
     #Phosphorus normalized concentrations (stacked)
-      Pnorm<-
+      #Pnorm<-
       allData %>% 
         # gather all nutrient data into long format
         pivot_longer(cols = c(DOP_mgS_km2, PO4_mgS_km2,PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
@@ -577,24 +612,45 @@ library("patchwork")
         ggplot(aes(x = site, y = conc, fill = var)) +
         facet_wrap(~period, ncol = 2, scales = "fixed") +
         geom_bar(position = "stack", stat = 'identity')+
-        #labs(x="Site",y="Instantaneous Yield (mgP/km2)")+
         ylab(expression(Instantaneous~Yield~(mg~P~km^{-2})))+
         xlab("Site")+
         theme_bw()+
+        #Lines to identify Relative Difference
+        #Line for md_dam with reference to md_lower
+        #Horizontal line
+        geom_linerange(aes(xmin = 2.5, xmax = 6.5, y = 1.1),color = "#bdb2ff", size = 1)+
+        #Vertical lines
+        geom_linerange(aes(x = 2.5, ymin = 0, ymax = 1.1),color = "#bdb2ff", size = 1) +
+        geom_linerange(aes(x = 6.5, ymin = 0, ymax = 1.1),color = "#bdb2ff", size = 2) +
+        #Line for md_upper with reference to md_lower
+        #Horizontal line
+        geom_linerange(aes(xmin = 3.5, xmax = 6.5, y = 0.9),color = "#b5e48c", size = 1)+
+        #Vertical lines
+        geom_linerange(aes(x = 3.5, ymin = 0, ymax = 0.9),color = "#b5e48c", size = 1) +
+        geom_linerange(aes(x = 6.5, ymin = 0, ymax = 0.9),color = "#b5e48c", size = 1) +
         #Add line and text to divide sites
-        geom_vline(xintercept = 3.5, size=1.5)+
-        geom_text(aes(x=2, y=1.5, label= "Headwater Catchments"),size=5, fontface = "bold",stat = "unique")+
-        geom_text(aes(x=5, y=1.5,label= "Wetland Complex"),size=5, fontface = "bold",stat = "unique")+
-        #Sites used to commppared %
-        #Make square
-        geom_rect(aes(xmin=2.5, xmax=6.5, ymin=0, ymax=0.95), alpha = 0.01)+
+        #Vertical line
+        geom_vline(xintercept = 2.5, size=1)+
+        #NOTE: Igrena - "I removed the next 2 lines because the words did not fit the plot when saved"
+        # geom_text(aes(x=1, y=1.3, label= "Headwater \n Catchments"),size=5, fontface = "plain",stat = "unique")+
+        # geom_text(aes(x=4.5, y=1.3,label= "Wetland Complex"),size=5, fontface = "plain",stat = "unique")+
         #Fill colors and arrange axis
         scale_fill_manual(values=c("#3a0ca3","#118ab2","#06d6a0","#bee9e8"),labels=c("PP","DOP","PO4"))+
-        theme(legend.title=element_blank(),legend.position = "bottom", axis.text.x = element_text(angle = 90))
-      
+        #Change legend text size
+        theme(legend.title=element_blank(),legend.text=element_text(size=12),
+              #Remove grid lines
+              panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
+              #Change text size
+              strip.text=element_text(size=14),
+              #Arrange axis labels and axis text size
+              axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
     
+      
+      #Save plot
+      ggsave(filename = "plots_Igrena/Plot_Pnorm.pdf",width=13,height = 12,units="cm",dpi = 300)
+      
     #Phosphorus normalized concentrations (proportions, stacked)
-      Pprop<-
+      #Pprop<-
       allData %>% 
         # Let's replace all negative PN concentrations with 0
         mutate(PP_mgPL = ifelse(PP_mgPL < 0, 0, PP_mgPL),
@@ -619,8 +675,19 @@ library("patchwork")
         scale_fill_manual(values=c("#3a0ca3","#118ab2","#06d6a0","#bee9e8"),
                           labels=c("PP","DOP","PO4"))+
         theme_bw()+
-        theme(legend.title=element_blank(), axis.text.x = element_text(angle = 90))
+        #Change legend text size
+        theme(legend.title=element_blank(),legend.text=element_text(size=12),
+              #Remove grid lines
+              panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
+              #Change text size
+              strip.text=element_text(size=14),
+              #Arrange axis labels and axis text size
+              axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
   
+      
+      #Save plot
+      ggsave(filename = "plots_Igrena/Plot_Pprop.pdf",width=13,height = 12,units="cm",dpi = 300)
+      
     #Phosphorus normalized concentrations by month (stacked) without Hungerford
     allData %>% 
       # gather all nutrient data into long format
@@ -642,36 +709,52 @@ library("patchwork")
 #Discharge and Stream Temperature----
     #discharge 
     #Plot
-    q_plot<-
+  #q_plot<-
     allData %>% 
-    ggplot(aes(x = site, y = q_cms)) +
+      ggplot(aes(x = site, y = q_cms, fill=q_cms)) +
       facet_wrap(~period, ncol = 2, scales = "fixed") +
-      geom_bar(position = "stack", stat = 'identity',fill="#5B9433")+
-      ylab(expression(Discharge~(cm^{3})))+
+      geom_bar(position = "stack", stat = 'identity')+
+      scale_fill_gradient(low = "#00b4d8", high = "#0077b6")+
+      ylab(expression(Discharge~(cm^{3}~s^{-1})))+
       xlab("Site")+
       theme_bw()+
-      theme(axis.text.x=element_blank(),
-            axis.title.x=element_blank())
+      #Change legend text size
+      theme(legend.title=element_blank(),legend.text=element_text(size=12),
+            #Remove grid lines
+            panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
+            #Change text size
+            strip.text=element_text(size=14),
+            #Arrange axis labels and axis text size
+            axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
+    
+    #Save plot
+    ggsave(filename = "plots_Igrena/Plot_discharge.pdf",width=13,height = 12,units="cm",dpi = 300)
     
     #temperature
     #Plot
-    temp_c<-
+  #temp_c<-
     allData %>% 
       ggplot(aes(x = site, y = temp_c,fill=temp_c)) +
       facet_wrap(~period, ncol = 2, scales = "fixed") +
-      geom_bar(position = "stack", stat = 'identity',fill="#234B34")+
-      ylab(expression(Temperature))+
+      geom_bar(position = "stack", stat = 'identity')+
+      scale_fill_gradient(low = "#00B2F5", high = "#F55B01")+
+      ylab(expression(Temperature~(degree*C)))+
       xlab("Site")+
       theme_bw()+
-      theme(axis.text.x=element_blank(),
-            axis.title.x=element_blank())
-    
-#Combine Nnorm/Nprop, Pnorm/Pprop, q_cms and, temp_c
-    (q_plot+temp_c)/(Nnorm+Nprop)/(Pnorm+Pprop)
+    #Change legend text size
+    theme(legend.title=element_blank(),legend.text=element_text(size=12),
+          #Remove grid lines
+          panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
+          #Change text size
+          strip.text=element_text(size=14),
+          #Arrange axis labels and axis text size
+          axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
+  
     #Save plot
-    ggsave(filename = "plots_Igrena/Plot_NPcombined.pdf",width=8,height = 7,units="in",dpi = 150)
-
+    ggsave(filename = "plots_Igrena/Plot_temperature.pdf",width=13,height = 12,units="cm",dpi = 300)
     
+  
+
 #Carbon (NPOC)
     
     #NPOC normalized concentrations by month
@@ -695,13 +778,11 @@ library("patchwork")
     rels_vals<-
       allData %>% 
       select(site, period, TN_mgS_km2, NO3_mgS_km2, TP_mgS_km2, PO4_mgS_km2, NPOC_mgS_km2)
-    
     #Reference md_lower 
     ref<-
       rels_vals%>% 
       filter(site == "md_lower") %>% 
       rename( lower = site , ref_TN = TN_mgS_km2, ref_NO3 = NO3_mgS_km2, ref_TP = TP_mgS_km2 , ref_PO4 = PO4_mgS_km2 , ref_DOC = NPOC_mgS_km2 )
-    
     #Site values without md_lower
     temp_site<-
       rels_vals %>% 
@@ -797,41 +878,15 @@ library("patchwork")
       #Change the concentrations from mg to g 
       mutate(gconc=conc/1000)
     
-----#Ratios and %----
+----#Ratios----
 
-# % to add on normalized concentration plots 
-#Compare the difference in TN,NO3,TP and PO4 concentrations in percent across md_dam to md_lower
-   
-    dam<-
-      allData %>% 
-      select(site,period,TN_mgS_km2,NO3_mgS_km2,TP_mgS_km2,PO4_mgS_km2) %>% 
-      filter(site %in% c("md_dam"))
-    
-    low<-
-      allData %>% 
-      select(site,period,TN_mgS_km2,NO3_mgS_km2,TP_mgS_km2,PO4_mgS_km2) %>% 
-      filter(site %in% c("md_lower")) %>% 
-      rename(lower=site,low_TN= TN_mgS_km2,low_NO3= NO3_mgS_km2,low_TP= TP_mgS_km2, low_PO4= PO4_mgS_km2)
-    
-    #Calculate the percent 
-    Percent<- 
-      full_join(dam,low, by = "period") %>% 
-      mutate(TN_perc=(TN_mgS_km2-low_TN)*100) %>% 
-      mutate(NO3_perc=(NO3_mgS_km2-low_NO3)*100) %>% 
-      mutate(TP_perc=(TP_mgS_km2-low_TP)*100) %>% 
-      mutate(PO4_perc=(PO4_mgS_km2-low_TN)*100)  #NOTE: When I multiply the difference by 100, some values are high  
-             
-
-#RAtios 
-    
-    #mg -> mol conversion
+#Ratios 
     
     #Filter molar concentrations
     temp_mol<-
       allData %>% 
       select(c(site,period,ends_with("_UM")))
 
-    
 Ratios<-
   #TN:TP
   temp_mol %>% 
@@ -842,6 +897,65 @@ Ratios<-
       mutate(TDN_TDP=TDN_uM/TDP_uM)
 
 #Ratio plots 
+
+#Plot for TN:TP
+Ratios %>% 
+ggplot(aes(x = site, y = TN_TP)) +
+  facet_wrap(~period, ncol = 2, scales = "fixed") +
+  geom_bar(position = "dodge", stat = 'identity',color="black",fill="#7FC4C4")+
+  labs(x="Site",y="TN:TP")+
+  theme_bw()+
+  #Change legend text size
+  theme(legend.title=element_blank(),legend.text=element_text(size=12),
+        #Remove grid lines
+        panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
+        #Change text size
+        strip.text=element_text(size=14),
+        #Arrange axis labels and axis text size
+        axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
+
+#Save plot
+ggsave(filename = "plots_Igrena/Plot_TN:TP.pdf",width=13,height = 12,units="cm",dpi = 300)
+
+
+#Plot for NO3:SRP
+Ratios %>% 
+  ggplot(aes(x = site, y = NO3_PO4)) +
+  facet_wrap(~period, ncol = 2, scales = "fixed") +
+  geom_bar(position = "dodge", stat = 'identity',color="black",fill="#7FC4C4")+
+  labs(x="Site",y="NO3:PO4")+
+  theme_bw()+
+  #Change legend text size
+  theme(legend.title=element_blank(),legend.text=element_text(size=12),
+        #Remove grid lines
+        panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
+        #Change text size
+        strip.text=element_text(size=14),
+        #Arrange axis labels and axis text size
+        axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
+
+#Save plot
+ggsave(filename = "plots_Igrena/Plot_NO3:PO4.pdf",width=13,height = 12,units="cm",dpi = 300)
+
+
+#Plot for TDN:TDP
+Ratios %>% 
+  ggplot(aes(x = site, y = TDN_TDP)) +
+  facet_wrap(~period, ncol = 2, scales = "fixed") +
+  geom_bar(position = "dodge", stat = 'identity',color="black",fill="#7FC4C4")+
+  labs(x="Site",y=" TDN:TDP")+
+  theme_bw()+
+  #Change legend text size
+  theme(legend.title=element_blank(),legend.text=element_text(size=12),
+        #Remove grid lines
+        panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
+        #Change text size
+        strip.text=element_text(size=14),
+        #Arrange axis labels and axis text size
+        axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
+
+#Save plot
+ggsave(filename = "plots_Igrena/Plot_TDN:TDP.pdf",width=13,height = 12,units="cm",dpi = 300)
 
 
 ----#Regular Concentration Plots (N,P,DOC)#----
@@ -960,7 +1074,7 @@ Ratios<-
       #labs(x="Site",y="Concentration")+
       ylab(expression(DOC~(mg~C~L^{-1}))) +
       xlab("Site")+
-      theme_bw()
+      theme_bw()+
     
     
     
