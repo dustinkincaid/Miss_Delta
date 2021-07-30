@@ -494,15 +494,9 @@ library("ggtext")
     #Line for md_dam with reference to md_lower
     #Horizontal line
       geom_linerange(aes(xmin = 2.5, xmax = 6.5, y = 60),color = "#bdb2ff", size = 1)+
-    #Vertical lines
-      geom_linerange(aes(x = 2.5, ymin = 0, ymax = 60),color = "#bdb2ff", size = 1) +
-      geom_linerange(aes(x = 6.5, ymin = 0, ymax = 60),color = "#bdb2ff", size = 2) +
     #Line for md_upper with reference to md_lower
     #Horizontal line
       geom_linerange(aes(xmin = 3.5, xmax = 6.5, y = 35),color = "#b5e48c", size = 1)+
-    #Vertical lines
-      geom_linerange(aes(x = 3.5, ymin = 0, ymax = 35),color = "#b5e48c", size = 1) +
-      geom_linerange(aes(x = 6.5, ymin = 0, ymax = 35),color = "#b5e48c", size = 1) +
     #Add line and text to divide sites
     #Vertical line
       geom_vline(xintercept = 2.5, size=1)+
@@ -619,15 +613,9 @@ library("ggtext")
         #Line for md_dam with reference to md_lower
         #Horizontal line
         geom_linerange(aes(xmin = 2.5, xmax = 6.5, y = 1.1),color = "#bdb2ff", size = 1)+
-        #Vertical lines
-        geom_linerange(aes(x = 2.5, ymin = 0, ymax = 1.1),color = "#bdb2ff", size = 1) +
-        geom_linerange(aes(x = 6.5, ymin = 0, ymax = 1.1),color = "#bdb2ff", size = 2) +
         #Line for md_upper with reference to md_lower
         #Horizontal line
         geom_linerange(aes(xmin = 3.5, xmax = 6.5, y = 0.9),color = "#b5e48c", size = 1)+
-        #Vertical lines
-        geom_linerange(aes(x = 3.5, ymin = 0, ymax = 0.9),color = "#b5e48c", size = 1) +
-        geom_linerange(aes(x = 6.5, ymin = 0, ymax = 0.9),color = "#b5e48c", size = 1) +
         #Add line and text to divide sites
         #Vertical line
         geom_vline(xintercept = 2.5, size=1)+
