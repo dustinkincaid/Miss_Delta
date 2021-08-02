@@ -510,8 +510,8 @@ library("ggtext")
           #Remove grid lines
           panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
           #Change text size
-          strip.text=element_text(size=20, face="bold"),strip.background =element_blank(),
-          #strip.text = element_blank(),
+          # strip.text=element_text(size=20, face="bold"),strip.background =element_blank(),
+          strip.text = element_blank(),
           #Arrange axis labels and axis text size
           axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))+
     
@@ -627,7 +627,7 @@ library("ggtext")
         geom_linerange(aes(xmin = 2.5, xmax = 6.5, y = 1.1),color = "#bdb2ff", size = 1)+
         #Line for md_upper with reference to md_lower
         #Horizontal line
-        geom_linerange(aes(xmin = 3.5, xmax = 6.5, y = 0.9),color = "#b5e48c", size = 1)+
+        geom_linerange(aes(xmin = 3.5, xmax = 6.5, y = 1),color = "#b5e48c", size = 1)+
         #Add line and text to divide sites
         #Vertical line
         geom_vline(xintercept = 2.5, size=1)+
@@ -690,7 +690,7 @@ library("ggtext")
               #strip.text=element_text(size=14),
               strip.text = element_blank(),
               #Arrange axis labels and axis text size
-              axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12)+
+              axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12),
               panel.spacing = unit(1, "cm"))
      
       #Save plot
