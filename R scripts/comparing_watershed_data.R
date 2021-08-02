@@ -475,7 +475,7 @@ library("ggtext")
       theme_bw()
     
     #Nitrogen normalized concentrations (stacked)
-  #Nnorm<-
+  Nnorm<-
   allData %>% 
     # gather all nutrient data into long format
       pivot_longer(cols = c(NO3_mgS_km2, NH4_mgS_km2, DON_mgS_km2, PN_mgS_km2), names_to = "var", values_to = "conc") %>% 
@@ -485,7 +485,7 @@ library("ggtext")
       mutate(conc= ifelse(conc < 0, 0, conc)) %>% 
     #Plot
       ggplot(aes(x = site, y = conc, fill = var)) +
-      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      facet_wrap(~period, ncol = 4, scales = "fixed") +
       geom_bar(position = "stack",stat = 'identity')+
       ylab(expression(Instantaneous~Yield~(mg~N~km^{-2})))+
       xlab("Site")+
@@ -510,10 +510,15 @@ library("ggtext")
           #Remove grid lines
           panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
           #Change text size
-          strip.text=element_text(size=14),
+          strip.text=element_text(size=20, face="bold"),strip.background =element_blank(),
+          #strip.text = element_blank(),
           #Arrange axis labels and axis text size
-          axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
+          axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))+
+    
+    #Remove plot y axis labels
+    theme(axis.title.x = element_blank(),axis.text.x = element_blank(),panel.spacing = unit(1, "cm"))
   
+    
   
   #Save plot
   ggsave(filename = "plots_Igrena/Plot_Nnorm.pdf",width=13,height = 12,units="cm",dpi = 300)
@@ -523,7 +528,7 @@ library("ggtext")
     # Let's look at how each N species (e.g., NO3, NH4, DON, & PN) contributes proportionally to the TN pool
     #Nitrogen normalized concentrations (proportions, stacked)
   
-  #Nprop<-
+  Nprop<-
   allData %>% 
     # Let's replace all negative PN concentrations with 0
     mutate(PN_mgNL = ifelse(PN_mgNL < 0, 0, PN_mgNL)) %>% 
@@ -542,20 +547,27 @@ library("ggtext")
     mutate(var = ordered(var, levels = c("PN_prop", "DON_prop", "NH4_prop", "NO3_prop"))) %>%
     # Plot
     ggplot(aes(x = site, y = prop, fill = var)) +
-    facet_wrap(~period, ncol = 2, scales = "fixed") +
+    facet_wrap(~period, ncol = 4, scales = "fixed") +
     geom_bar(position = "stack", stat = 'identity')+
     labs(x="Site", y="Proportion of TN")+
     scale_fill_manual(values=c("#3a0ca3","#118ab2","#06d6a0","#bee9e8"),
                       labels=c("PN","DON","NH4","NO3"))+
     theme_bw()+
+    #Add to divide sites
+    #Vertical line
+    geom_vline(xintercept = 2.5, size=1)+
     #Change legend text size
     theme(legend.title=element_blank(),legend.text=element_text(size=12),
           #Remove grid lines
           panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
           #Change text size
-          strip.text=element_text(size=14),
+          #strip.text=element_text(size=14),
+          strip.text = element_blank(),
           #Arrange axis labels and axis text size
-          axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
+          axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))+
+    
+    #Remove plot y axis labels
+    theme(axis.title.x = element_blank(),axis.text.x = element_blank(),panel.spacing = unit(1, "cm"))
   
   #Save plot
   ggsave(filename = "plots_Igrena/Plot_Nprop.pdf",width=13,height = 12,units="cm",dpi = 300)
@@ -594,7 +606,7 @@ library("ggtext")
       theme_bw()
     
     #Phosphorus normalized concentrations (stacked)
-      #Pnorm<-
+      Pnorm<-
       allData %>% 
         # gather all nutrient data into long format
         pivot_longer(cols = c(DOP_mgS_km2, PO4_mgS_km2,PP_mgS_km2), names_to = "var", values_to = "conc") %>% 
@@ -604,7 +616,7 @@ library("ggtext")
         mutate(conc= ifelse(conc < 0, 0, conc)) %>% 
         #Plot
         ggplot(aes(x = site, y = conc, fill = var)) +
-        facet_wrap(~period, ncol = 2, scales = "fixed") +
+        facet_wrap(~period, ncol = 4, scales = "fixed") +
         geom_bar(position = "stack", stat = 'identity')+
         ylab(expression(Instantaneous~Yield~(mg~P~km^{-2})))+
         xlab("Site")+
@@ -629,16 +641,20 @@ library("ggtext")
               #Remove grid lines
               panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
               #Change text size
-              strip.text=element_text(size=14),
+              #strip.text=element_text(size=14),
+              strip.text = element_blank(),
               #Arrange axis labels and axis text size
-              axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
+              axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))+
+        
+        #Remove plot Y axis labels
+        theme(axis.title.x = element_blank(),axis.text.x = element_blank(),panel.spacing = unit(1, "cm"))
     
       
       #Save plot
       ggsave(filename = "plots_Igrena/Plot_Pnorm.pdf",width=13,height = 12,units="cm",dpi = 300)
       
     #Phosphorus normalized concentrations (proportions, stacked)
-      #Pprop<-
+      Pprop<-
       allData %>% 
         # Let's replace all negative PN concentrations with 0
         mutate(PP_mgPL = ifelse(PP_mgPL < 0, 0, PP_mgPL),
@@ -657,22 +673,26 @@ library("ggtext")
         mutate(var = ordered(var, levels = c("PP_prop", "DOP_prop", "PO4_prop"))) %>%
         # Plot
         ggplot(aes(x = site, y = prop, fill = var)) +
-        facet_wrap(~period, ncol = 2, scales = "fixed") +
+        facet_wrap(~period, ncol = 4, scales = "fixed") +
         geom_bar(position = "stack", stat = 'identity')+
         labs(x="Site", y="Proportion of TP")+
         scale_fill_manual(values=c("#3a0ca3","#118ab2","#06d6a0","#bee9e8"),
                           labels=c("PP","DOP","PO4"))+
         theme_bw()+
+        #Add to divide sites
+        #Vertical line
+        geom_vline(xintercept = 2.5, size=1)+
         #Change legend text size
         theme(legend.title=element_blank(),legend.text=element_text(size=12),
               #Remove grid lines
               panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
               #Change text size
-              strip.text=element_text(size=14),
+              #strip.text=element_text(size=14),
+              strip.text = element_blank(),
               #Arrange axis labels and axis text size
-              axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
-  
-      
+              axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12)+
+              panel.spacing = unit(1, "cm"))
+     
       #Save plot
       ggsave(filename = "plots_Igrena/Plot_Pprop.pdf",width=13,height = 12,units="cm",dpi = 300)
       
@@ -692,55 +712,82 @@ library("ggtext")
       labs(x="Site",y="Instantaneous Yield (mg P/km2)")+
       scale_fill_manual(values=c("#515E63","#282846","#007580","#57837B"))+
       theme_bw()
-
+    
+    #Combined Nnorm, Nprop and Pnorm Pprop
+    (Nnorm/Nprop/Pnorm/Pprop)
+    #Save plot
+    #Poster size
+    ggsave(filename = "plots_Igrena/Plot_Comb.N&Pnorm_prop.pdf",width=58.45 ,height = 47.63 ,units="cm",dpi = 300)
+    
+    #Combine discharge,Nnorm, Nprop and Pnorm Pprop
+    (q_plot/Nnorm/Nprop/Pnorm/Pprop)
+    #Poster size
+    ggsave(filename = "plots_Igrena/Plot_Comb.q_NPnorm_prop.pdf",width=60 ,height = 47.63 ,units="cm",dpi = 300)
+    
     
 #Discharge and Stream Temperature----
     #discharge 
     #Plot
-  #q_plot<-
+  q_plot<-
     allData %>% 
       ggplot(aes(x = site, y = q_cms, fill=q_cms)) +
-      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      facet_wrap(~period, ncol = 4, scales = "fixed") +
       geom_bar(position = "stack", stat = 'identity')+
       scale_fill_gradient(low = "#00b4d8", high = "#0077b6")+
-      ylab(expression(Discharge~(cm^{3}~s^{-1})))+
+      ylab(expression(Discharge~(m^{3}~s^{-1})))+
       xlab("Site")+
       theme_bw()+
+      #Add to divide sites
+      #Vertical line
+      geom_vline(xintercept = 2.5, size=1)+
       #Change legend text size
       theme(legend.title=element_blank(),legend.text=element_text(size=12),
             #Remove grid lines
             panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
             #Change text size
-            strip.text=element_text(size=14),
+            #strip.text=element_text(size=14),
+            strip.text=element_text(size=20, face="bold"),strip.background =element_blank(),
             #Arrange axis labels and axis text size
-            axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
+            axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))+
+    #Remove plot y axis labels
+    theme(axis.title.x = element_blank(),axis.text.x = element_blank(),panel.spacing = unit(1, "cm"))
     
     #Save plot
     ggsave(filename = "plots_Igrena/Plot_discharge.pdf",width=13,height = 12,units="cm",dpi = 300)
     
     #temperature
     #Plot
-  #temp_c<-
+  temp_c<-
     allData %>% 
       ggplot(aes(x = site, y = temp_c,fill=temp_c)) +
-      facet_wrap(~period, ncol = 2, scales = "fixed") +
+      facet_wrap(~period, ncol = 4, scales = "fixed") +
       geom_bar(position = "stack", stat = 'identity')+
       scale_fill_gradient(low = "#00B2F5", high = "#F55B01")+
       ylab(expression(Temperature~(degree*C)))+
       xlab("Site")+
       theme_bw()+
+      #Add to divide sites
+      #Vertical line
+      geom_vline(xintercept = 2.5, size=1)+
     #Change legend text size
     theme(legend.title=element_blank(),legend.text=element_text(size=12),
           #Remove grid lines
           panel.grid.major=element_blank(),panel.grid.minor=element_blank(),
           #Change text size
-          strip.text=element_text(size=14),
+          #strip.text=element_text(size=14),
+          strip.text = element_blank(),
           #Arrange axis labels and axis text size
           axis.text.x = element_text(angle = 90),axis.title.x=element_text(size=14),axis.title.y=element_text(size=14),axis.text=element_text(size=12))
   
     #Save plot
     ggsave(filename = "plots_Igrena/Plot_temperature.pdf",width=13,height = 12,units="cm",dpi = 300)
     
+    #Save plot
+    ggsave(filename = "plots_Igrena/Plot_temperature2.pdf",width=20,height = 12,units="cm",dpi = 300)
+    
+    
+    #Combined discharge and temperature plot 
+    (q_plot/temp_c)
   
 
 #Carbon (NPOC)
@@ -788,7 +835,7 @@ library("ggtext")
       #Calculate relative difference for PO4  
       mutate(PO4_diff=(PO4_mgS_km2 - ref_PO4)/ref_PO4 * 100) %>% 
       #Calculate relative difference for DOC  
-      mutate(DOC_diff=(NPOC_mgS_km2 - ref_DOC)/ref_DOC * 100)
+      mutate(DOC_diff=(NPOC_mgS_km2 - ref_DOC)/ref_DOC * 100) 
     
 #Plotting Relative Difference
     #Total Nitrogen and NO3
