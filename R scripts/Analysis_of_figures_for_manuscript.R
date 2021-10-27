@@ -8,11 +8,13 @@
 
 library("tidyverse")
 library("lubridate")
-# library("xts")
-# library("cowplot")
+#library("xts")
+library("cowplot")
 library("patchwork")
 
 # setwd("C:/Users/esovc/ownCloud3/Shared/BREE/Watershed Data/Miss_Delta")
+
+#----Plot 01----
 
 #Load in Miss Riv @ Swanton dam discharge data
 # discharge <- read_csv("Data/USGS Data/swanton_discharge_data.csv", col_types = cols()) %>% 
@@ -125,13 +127,111 @@ plot1 <- pl_dis / pl_lake + plot_annotation(tag_levels = "a")
 #                    labels = "auto")
 ggsave("Plots/figure2_discharge_lakelevel.png", plot1, width = 6, height = 4, units = "in", dpi = 150)
 
+
 #/#/#/#/#/#/#
+
+#----Plot 02----
 
 #Plot as bar plots similar to Figures 3e-h in ED thesis, except that instead of CV%, 
 #plot means as bar height and std dev as error bars; might want to include Figures 
 #3a-d in Supp Info if we describe any aspect of longitudinal variability or signal 
 #(e.g., if we want to show where we think lake might start to influence river vars near river mouth); 
 #include this stacked bar plot as a subplot of the figure with discharge and lake levels
+
+#Means
+
+month_sum %>% 
+  filter(transect == "Main") %>% 
+  filter(var %in% c("Al_ppb_0.45", "Si_ppb_0.45", "Mn_ppb_0.45", "Fe_ppb_0.45")) %>% 
+  ggplot(aes(x = month, y = mean, fill = month)) +  
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd)) +
+  facet_wrap(~var, scales = "free_y")
+
+#Read in data
+may <- read_csv("Data/alldata_compiled_2019-05-17.csv", col_types = cols()) %>%
+  mutate(r_timestamp = as.character(r_timestamp)) %>% 
+  # Remove low DOC outlier in May
+  mutate(NPOC_mgCL = ifelse(NPOC_mgCL < 1, NA, NPOC_mgCL))
+july <- read_csv("Data/alldata_compiled_2019-07-03.csv", col_types = cols()) %>%
+  mutate(r_timestamp = as.character(r_timestamp))
+# august <- read_csv("Data/alldata_compiled_2019-08-14.csv",
+#                    col_types = cols(NO3_UM = "n", NH4_UM = "d",PO4_UM = "d", 
+#                                     NO3_mgNL = "d", NH4_mgNL = "d", PO4_mgPL = "d")) %>%
+#   mutate(r_timestamp = as.character(r_timestamp))
+# Here is a weird f&cking workaround for the issue above w/ August data - angry face!
+august <- read_csv("Data/alldata_compiled_2019-08-14.csv", col_types = cols()) %>% 
+  mutate(r_timestamp = as.character(r_timestamp),
+         NO3_UM = as.numeric(NO3_UM),
+         NH4_UM = as.numeric(NH4_UM),
+         PO4_UM = as.numeric(PO4_UM), 
+         NO3_mgNL = as.numeric(NO3_mgNL), 
+         NH4_mgNL = as.numeric(NH4_mgNL), 
+         PO4_mgPL = as.numeric(PO4_mgPL))
+october <- read_csv("Data/alldata_compiled_2019-10-21.csv", col_types = cols()) %>%
+  mutate(r_timestamp = as.character(r_timestamp)) 
+
+
+# Bind data together
+comb <- bind_rows(may, july, august, october) %>% 
+  # Format date if not already done
+  mutate(r_timestamp = ymd_hms(r_timestamp)) %>% 
+  # Add a month column & make it a factor instead of number
+  mutate(month = as.factor(month(r_timestamp)))
+# rm(may, july, august, october)
+
+#Calculate N and P fractions (that were not measured)
+comb <- comb %>% 
+  #Calculate Particulate N 
+  mutate(PN = TN_mgNL - TDN_mgNL) %>% 
+  #Calculate DON
+  mutate(DON = TDN_mgNL - NH4_mgNL - NO3_mgNL) %>% 
+  #Calculate Particulate P
+  mutate(PP = TP_mgPL - TDP_mgPL) %>% 
+  #Calculate DOP
+  mutate(DOP = TDP_mgPL - PO4_mgPL) %>% 
+  #Make negative values 0
+  mutate(PN = replace(PN, PN < 0, 0),
+         PP = replace(PP, PP < 0, 0)) %>% 
+  #Calculate molar ratios
+  mutate(TN_TP = TN_UM / TP_UM,
+         DIN_SRP = (NO3_UM + NH4_UM) / PO4_UM,
+         DOC_TN = NPOC_mgCL * 1000/12.011 / TN_UM,
+         DOC_TP = NPOC_mgCL * 1000/12.011 / TP_UM,
+         DOC_DIN = NPOC_mgCL * 1000/12.011 / (NO3_UM + NH4_UM),
+         DOC_SRP = NPOC_mgCL * 1000/12.011 / PO4_UM) 
+
+
+# Calculate summary stats for each month
+month_sum <- comb %>% 
+  gather(key = "var", value = "value", c(temp_c, do_mgl, do_per, spc_uscm, ph, NO3_UM:Fe_ppb_0.45, PN:DOC_TP)) %>% 
+  group_by(transect, month, var) %>% 
+  summarize(mean = mean(value, na.rm = TRUE),
+            sd = sd(value, na.rm = TRUE),
+            CV = sd(value, na.rm = TRUE) / mean(value, na.rm = TRUE),
+            CV_per = CV*100) %>% 
+  filter(transect != "Dam") %>% 
+  ungroup()
+
+
+#Ploting Data 
+month_sum %>% 
+  filter(transect == "Main") %>% 
+  filter(var %in% c("do_per", "ph", "spc_uscm", "temp_c")) %>% 
+  # Re-order the variables so that temperature is plotted on top
+  mutate(var = factor(var, levels = c("temp_c", "do_per", "ph", "spc_uscm"),
+                      # I provide labels here for the facetted plots that include symbols and then use labeller = label_parsed below to parse them into label text
+                      labels = c("Temp.~(degree*C)", "DO~('%'*~saturation)", "pH", "Sp.~cond.~(mu*S~cm^{-1})"))) %>% 
+  # Provide abbreviated month labels for legend instead of numbers
+  mutate(month = factor(month, levels = c("5", "7", "8", "10"),
+                        labels = c("May", "Jul", "Aug", "Oct"))) %>%
+  ggplot(aes(x = month, y = mean, fill = month)) +  
+  geom_bar(stat = "identity") +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd)) +
+  facet_wrap(~var, ncol=1,scales = "fixed")
+
+
+#----Suplemental information: Plots---- 
 
 
 
