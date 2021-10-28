@@ -132,23 +132,9 @@ ggsave("Plots/figure2_discharge_lakelevel.png", plot1, width = 6, height = 4, un
 
 #----Plot 02----
 
-#Plot as bar plots similar to Figures 3e-h in ED thesis, except that instead of CV%, 
-#plot means as bar height and std dev as error bars; might want to include Figures 
-#3a-d in Supp Info if we describe any aspect of longitudinal variability or signal 
-#(e.g., if we want to show where we think lake might start to influence river vars near river mouth); 
-#include this stacked bar plot as a subplot of the figure with discharge and lake levels
-
-#Means
-
-month_sum %>% 
-  filter(transect == "Main") %>% 
-  filter(var %in% c("Al_ppb_0.45", "Si_ppb_0.45", "Mn_ppb_0.45", "Fe_ppb_0.45")) %>% 
-  ggplot(aes(x = month, y = mean, fill = month)) +  
-  geom_bar(stat = "identity") +
-  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd)) +
-  facet_wrap(~var, scales = "free_y")
-
 #Read in data
+#code extracted from the script: combined data analysis.R
+#lines 11 - 74
 may <- read_csv("Data/alldata_compiled_2019-05-17.csv", col_types = cols()) %>%
   mutate(r_timestamp = as.character(r_timestamp)) %>% 
   # Remove low DOC outlier in May
@@ -228,8 +214,11 @@ month_sum %>%
   ggplot(aes(x = month, y = mean, fill = month)) +  
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd)) +
-  facet_wrap(~var, ncol=1,scales = "fixed")
+  facet_wrap(~var, ncol=1,scales = "free_y")
 
+#----Plot 3 ---- 
+
+#Nitrogen Dynamics plot 
 
 #----Suplemental information: Plots---- 
 
