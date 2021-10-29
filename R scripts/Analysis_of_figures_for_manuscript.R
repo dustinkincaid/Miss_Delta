@@ -227,7 +227,7 @@ month_sum %>%
   ggplot(aes(x = month, y = mean, fill = month)) +  
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd)) +
-  facet_wrap(~var, ncol=1,scales = "free_y")
+  facet_wrap(~var, ncol=1,scales = "free_y", labeller = label_parsed)
 
 #----Plot 3 ---- 
 
