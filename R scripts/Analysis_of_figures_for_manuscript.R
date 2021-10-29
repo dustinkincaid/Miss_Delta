@@ -47,18 +47,18 @@ lake <- read_csv("Data/USGS Data/lake_level_burlington_data.csv", col_types = co
   # Erin Seybold used a discharge relationship with another nearby site to estimate discharge for this period
   # So we will use the CSV file with the estimated discharge
   # Hford
-  q_hford <- read_csv("Data/hungerford_2019_best_q.csv", col_types = cols()) %>% 
+  q_hford <- read_csv("Data/hungerford_2019_best_q_meas+est.csv", col_types = cols()) %>% 
     mutate(site = "Hungerford") %>% 
     rename(q_cms = HF_best_q, timestamp = r_timestamp) %>% 
-    select(-c(X1, hobo_stage, offset, hobo_stage_int, corr_stage)) %>% 
-    mutate(timestamp = ymd_hms(timestamp, tz = "America/New_York")) %>% 
+    # select(-c(X1, hobo_stage, offset, hobo_stage_int, corr_stage)) %>% 
+    mutate(timestamp = mdy_hm(timestamp, tz = "America/New_York")) %>% 
     filter(timestamp < ymd_hms("2019-11-01 00:00:00", tz = "America/New_York"))
   
   # Wade
-  q_wade <- read_csv("Data/wade_2019_best_q.csv", col_types = cols()) %>% 
+  q_wade <- read_csv("Data/wade_2019_best_q_meas+est.csv", col_types = cols()) %>% 
     mutate(site = "Wade") %>% rename(q_cms = best_q, timestamp = r_timestamp) %>% 
-    select(site, timestamp, q_cms) %>% 
-    mutate(timestamp = ymd_hms(timestamp, tz = "America/New_York")) %>% 
+    select(site, timestamp, q_cms, source) %>% 
+    mutate(timestamp = mdy_hm(timestamp, tz = "America/New_York")) %>% 
     filter(timestamp < ymd_hms("2019-11-01 00:00:00", tz = "America/New_York"))
 
 # Combine and calculate average discharge per day of data (to simplify and match lake data frequency)
